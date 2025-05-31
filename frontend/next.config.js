@@ -2,7 +2,7 @@
 const nextConfig = {
   reactStrictMode: true,
   
-  // Using dynamic SSR for real-time data
+  // Output build to standard Next.js directory
   distDir: '.next',
   
   // Enable server components and API routes
@@ -13,9 +13,8 @@ const nextConfig = {
   skipMiddlewareUrlNormalize: true,
   trailingSlash: false,
 
+  // Vercel-optimized image configuration
   images: {
-    // Enable Next.js image optimization for dynamic rendering
-    unoptimized: false,
     domains: ['github.com', 'raw.githubusercontent.com'],
     remotePatterns: [
       {
@@ -24,10 +23,12 @@ const nextConfig = {
       },
     ],
   },
+  
   // Skip TypeScript type checking during builds for faster deployment
   typescript: {
     ignoreBuildErrors: true,
   },
+  
   // Also ignore ESLint errors to ensure the build completes
   eslint: {
     ignoreDuringBuilds: true,
