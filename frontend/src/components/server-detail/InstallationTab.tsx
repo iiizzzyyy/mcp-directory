@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import InstallBlock from './InstallBlock';
+import LanguageSelector from './LanguageSelector';
 import { AlertCircle } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
@@ -34,6 +35,14 @@ export default function InstallationTab({
   const [instructions, setInstructions] = useState<InstallInstruction[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedLanguage, setSelectedLanguage] = useState('bash');
+  
+  const languages = [
+    { id: 'bash', name: 'Bash/Shell' },
+    { id: 'powershell', name: 'PowerShell' },
+    { id: 'javascript', name: 'JavaScript/Node' },
+    { id: 'python', name: 'Python' }
+  ];
 
   useEffect(() => {
     const fetchInstructions = async () => {
@@ -109,20 +118,38 @@ export default function InstallationTab({
 
   return (
     <div className="space-y-6">
-      <h2 className="text-xl font-semibold mb-4">Installation Instructions</h2>
-      <p className="text-gray-600 mb-4">
-        These are platform-specific installation instructions for {server?.name || "this MCP server"}.
-      </p>
-      {instructions.map((instruction, index) => (
-        <InstallBlock
-          key={index}
-          platform={instruction.platform}
-          icon={instruction.icon_url || undefined}
-          installCommand={instruction.install_command}
-          additionalSteps={instruction.additional_steps || undefined}
-          requirements={instruction.requirements || undefined}
+      <div className="mb-6">
+        <h2 className="text-xl font-semibold">Installation Instructions</h2>
+        <p className="text-gray-600 mt-1">
+          Install {server?.name || "this MCP server"} on your preferred platform
+        </p>
+      </div>
+
+      <div className="w-full md:w-64 mb-6">
+        <label className="text-sm text-gray-600 mb-2 block">
+          Select Language / Platform
+        </label>
+        <LanguageSelector
+          languages={languages}
+          selectedLanguage={selectedLanguage}
+          onLanguageChange={(langId) => setSelectedLanguage(langId)}
+          className="w-full"
         />
-      ))}
+      </div>
+
+      <div className="space-y-8">
+        {instructions.map((instruction, index) => (
+          <InstallBlock
+            key={index}
+            platform={instruction.platform}
+            icon={instruction.icon_url || undefined}
+            installCommand={instruction.install_command}
+            additionalSteps={instruction.additional_steps || undefined}
+            requirements={instruction.requirements || undefined}
+            className="border-gray-200"
+          />
+        ))}
+      </div>
     </div>
   );
 }

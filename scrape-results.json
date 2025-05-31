@@ -1,0 +1,19 @@
+{
+  "startTime": "2025-05-31T16:51:59.201Z",
+  "endTime": "2025-05-31T16:51:59.202Z",
+  "totalServers": 0,
+  "batchesProcessed": 0,
+  "processed": 0,
+  "updated": 0,
+  "failed": 0,
+  "skipped": 0,
+  "batches": [],
+  "errors": [
+    {
+      "phase": "main",
+      "error": "ora is not a function",
+      "timestamp": "2025-05-31T16:51:59.202Z"
+    }
+  ],
+  "serverDetails": []
+}
