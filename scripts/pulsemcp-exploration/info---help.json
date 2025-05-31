@@ -1,0 +1,8 @@
+{
+  "command": "info --help",
+  "timestamp": "2025-05-30T11:40:57.161Z",
+  "result": {
+    "success": true,
+    "output": ""
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "command": "get-install --help",
+  "timestamp": "2025-05-30T11:41:01.366Z",
+  "result": {
+    "success": true,
+    "output": ""
+  }
+}

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Server Details | MCP Directory</title>
+  <!-- This file serves as a fallback template for dynamic server detail pages -->
+  <!-- It will be served with a 200 status code instead of 404 -->
+  <!-- The Next.js client-side code will handle fetching and rendering the correct content -->
+  <script>
+    // Extract server ID from the URL path
+    const pathParts = window.location.pathname.split('/');
+    const serverId = pathParts[pathParts.length - 1];
+    
+    // This script ensures the client-side router takes over
+    window.__NEXT_ROUTER_BASEPATH = "";
+    window.__NEXT_DROPPED_DURING_SERVER_RENDER = true;
+    window.__NEXT_DATA__ = {
+      props: { pageProps: {}, __N_SSG: true },
+      page: "/servers/[id]",
+      query: { id: serverId },
+      buildId: "oDS6UybmzLAjXlTh4eDGH",
+    };
+  </script>
+  <link rel="preload" as="script" href="/_next/static/chunks/webpack-12f2680dca67ec27.js">
+  <link rel="preload" as="script" href="/_next/static/chunks/main-01022aa917a340d9.js">
+  <link rel="preload" as="script" href="/_next/static/chunks/framework-00a8ba1a63cfdc9e.js">
+</head>
+<body>
+  <div id="__next">
+    <!-- Server detail skeleton that matches the structure of the actual component -->
+    <div class="container mx-auto px-4 py-8">
+      <div class="max-w-6xl mx-auto">
+        <!-- Server detail header skeleton -->
+        <div class="mb-8 animate-pulse">
+          <div class="h-8 bg-gray-200 rounded w-3/4 mb-4"></div>
+          <div class="h-4 bg-gray-200 rounded w-1/2 mb-6"></div>
+          <div class="flex space-x-4 mb-6">
+            <div class="h-6 bg-gray-200 rounded w-20"></div>
+            <div class="h-6 bg-gray-200 rounded w-20"></div>
+            <div class="h-6 bg-gray-200 rounded w-20"></div>
+          </div>
+        </div>
+        
+        <!-- Tabs skeleton -->
+        <div class="border-b mb-6">
+          <div class="flex space-x-4">
+            <div class="h-10 bg-gray-200 rounded w-24"></div>
+            <div class="h-10 bg-gray-200 rounded w-24"></div>
+            <div class="h-10 bg-gray-200 rounded w-24"></div>
+          </div>
+        </div>
+        
+        <!-- Content skeleton -->
+        <div class="space-y-4">
+          <div class="h-4 bg-gray-200 rounded w-full"></div>
+          <div class="h-4 bg-gray-200 rounded w-full"></div>
+          <div class="h-4 bg-gray-200 rounded w-3/4"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Next.js scripts with proper loading order -->
+  <script src="/_next/static/chunks/webpack-12f2680dca67ec27.js"></script>
+  <script src="/_next/static/chunks/framework-00a8ba1a63cfdc9e.js"></script>
+  <script src="/_next/static/chunks/main-01022aa917a340d9.js"></script>
+  <script src="/_next/static/chunks/fd9d1056-240005d59869e9c5.js"></script>
+  <script src="/_next/static/chunks/69-567b627a44d5f742.js"></script>
+  <script src="/_next/static/chunks/690-18662d8cbe2320dc.js"></script>
+  <script src="/_next/static/oDS6UybmzLAjXlTh4eDGH/_buildManifest.js"></script>
+  <script src="/_next/static/oDS6UybmzLAjXlTh4eDGH/_ssgManifest.js"></script>
+  
+  <!-- Fallback script with improved error handling -->
+  <script>
+    // Handle loading failures and errors
+    window.addEventListener('error', function(event) {
+      console.log('Captured error:', event.message);
+      // Check if it's a script loading error or a hydration error
+      if (event.message.includes('TypeError') || event.message.includes('null')) {
+        showFallbackMessage();
+      }
+    });
+    
+    // Show fallback message after timeout
+    setTimeout(function() {
+      showFallbackMessage();
+    }, 5000);
+    
+    function showFallbackMessage() {
+      // Only show fallback if we still have our skeleton (hydration failed)
+      if (document.querySelector('.animate-pulse')) {
+        const mainContent = document.querySelector('.max-w-6xl');
+        if (mainContent) {
+          mainContent.innerHTML = `
+            <div class="text-center py-12">
+              <h1 class="text-2xl font-semibold mb-4">Loading Taking Too Long</h1>
+              <p class="text-gray-600 mb-6">There might be an issue loading this server's details.</p>
+              <button id="redirect-btn" class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded">
+                Return to Servers List
+              </button>
+            </div>
+          `;
+          document.getElementById('redirect-btn').addEventListener('click', function() {
+            window.location.href = '/servers';
+          });
+        }
+      }
+    }
+  </script>
+</body>
+</html>

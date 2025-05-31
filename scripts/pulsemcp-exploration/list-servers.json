@@ -1,0 +1,8 @@
+{
+  "command": "list-servers",
+  "timestamp": "2025-05-30T11:40:53.753Z",
+  "result": {
+    "success": true,
+    "output": ""
+  }
+}

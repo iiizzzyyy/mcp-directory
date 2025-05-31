@@ -1,0 +1,23 @@
+{
+  "name": "mcp-directory-crawler",
+  "version": "1.0.0",
+  "description": "Node.js client for crawling MCP directories using Firecrawl",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js"
+  },
+  "keywords": [
+    "mcp",
+    "crawler",
+    "firecrawl",
+    "supabase"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.3",
+    "dotenv": "^16.3.1",
+    "node-fetch": "^2.7.0"
+  }
+}

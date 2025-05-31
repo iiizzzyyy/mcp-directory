@@ -1,0 +1,78 @@
+[build]
+  command = "npm run build"
+  publish = ".next"
+  functions = "netlify/functions"
+
+# Next.js-specific settings for dynamic rendering
+[build.environment]
+  NEXT_USE_NETLIFY_EDGE = "true"
+  NEXT_FORCE_EDGE_IMAGES = "true"
+  NODE_VERSION = "18"
+  NEXT_PUBLIC_SUPABASE_URL = "https://nryytfezkmptcmpawlva.supabase.co"
+  NEXT_PUBLIC_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5yeXl0ZmV6a21wdGNtcGF3bHZhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTc1NTU5MzUsImV4cCI6MjAzMzEzMTkzNX0.wP7E-WiJyuLIzQAO3gVgfGLgUYgY7vQTZEcS1QUMYvA"
+
+# For Next.js dynamic rendering
+[build.processing]
+  skip_processing = true
+
+# Netlify Next.js Runtime Configuration
+[functions]
+  external_node_modules = ["next"]
+  node_bundler = "esbuild"
+
+# Netlify Edge configuration for Next.js
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+# Next.js dynamic routes and assets
+[[redirects]]
+  from = "/_next/*"
+  to = "/_next/:splat"
+  status = 200
+
+# Handle API routes with our existing serverless functions
+[[redirects]]
+  from = "/api/servers/search*"
+  to = "/.netlify/functions/api-servers-search"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/servers/:id*"
+  to = "/.netlify/functions/api-servers-id/:id"
+  status = 200
+  force = true
+  
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/api"
+  status = 200
+
+# Let Next.js handle dynamic server routes directly
+# No more need for fallback redirect to servers.html
+
+# Handle data routes
+[[redirects]]
+  from = "/_next/data/*"
+  to = "/_next/data/:splat"
+  status = 200
+
+# Direct server detail pages to their exact locations
+[[redirects]]
+  from = "/servers/:id"
+  to = "/servers/:id/index.html"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/servers/:id/"
+  to = "/servers/:id/index.html"
+  status = 200
+  force = true
+
+# Generic catch-all for other dynamic routes
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+  force = false

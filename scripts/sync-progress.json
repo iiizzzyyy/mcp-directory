@@ -1,0 +1,13 @@
+{
+  "total": 500,
+  "added": 493,
+  "updated": 7,
+  "skipped": 0,
+  "errors": [],
+  "currentPage": 6,
+  "nextUrl": "https://api.pulsemcp.com/v0beta/servers?count_per_page=100&offset=500",
+  "startTime": "2025-05-29T19:23:38.780Z",
+  "lastUpdated": "2025-05-29T19:26:10.732Z",
+  "completed": true,
+  "completedAt": "2025-05-29T19:26:10.732Z"
+}

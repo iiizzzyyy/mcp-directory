@@ -1,0 +1,58 @@
+[build]
+  base = "frontend"
+  command = "npm run build"
+  publish = ".next"
+  functions = "netlify/functions"
+
+[build.environment]
+  NODE_VERSION = "18"
+  NEXT_PUBLIC_SUPABASE_URL = "https://nryytfezkmptcmpawlva.supabase.co"
+  NEXT_PUBLIC_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5yeXl0ZmV6a21wdGNtcGF3bHZhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTk3NTE5MTEsImV4cCI6MjAzNTMyNzkxMX0.D1fUzQNVZUfDORSbZrCc1iGdWTwUv1O4LnROW0M7s4k"
+
+# Next.js specific settings
+[build.processing]
+  skip_processing = false
+[build.processing.css]
+  bundle = false
+  minify = false
+[build.processing.js]
+  bundle = false
+  minify = false
+[build.processing.html]
+  pretty_urls = true
+[build.processing.images]
+  compress = false
+
+# Netlify Edge configuration
+[[edge_functions]]
+  function = "next-server"
+  path = "/*"
+
+# Handle all Next.js paths
+[[redirects]]
+  from = "/_next/static/*"
+  to = "/static/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/_next/image*"
+  to = "/.netlify/functions/next-image"
+  status = 200
+
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/nextjs-api/:splat"
+  status = 200
+
+# SPA fallback - handles client-side routing
+[[redirects]]
+  from = "/*"
+  to = "/.netlify/functions/next-server"
+  status = 200
+
+# Protect access to Supabase environment variables
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"

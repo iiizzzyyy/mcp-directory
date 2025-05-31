@@ -1,0 +1,8 @@
+{
+  "command": "server --help",
+  "timestamp": "2025-05-30T11:40:55.512Z",
+  "result": {
+    "success": true,
+    "output": ""
+  }
+}

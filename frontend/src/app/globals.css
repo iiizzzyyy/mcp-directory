@@ -1,0 +1,52 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Import Inter font from Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700&display=swap');
+
+@layer base {
+  :root {
+    /* White background with soft contrast */
+    --background: 0 0% 100%;
+    --foreground: 220 20% 25%; /* Softer than pure black for better readability */
+
+    /* Pastel theme colors in HSL format */
+    --primary: 207 52% 84%; /* Pastel blue */
+    --primary-foreground: 220 20% 25%;
+
+    --secondary: 120 25% 82%; /* Pastel green */
+    --secondary-foreground: 220 20% 25%;
+
+    --accent: 280 47% 90%; /* Pastel purple */
+    --accent-foreground: 220 20% 25%;
+
+    --muted: 210 20% 92%;
+    --muted-foreground: 220 10% 45%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 220 20% 25%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 20% 25%;
+
+    --destructive: 0 70% 90%; /* Soft red */
+    --destructive-foreground: 0 50% 30%;
+
+    --border: 220 20% 92%;
+    --input: 220 20% 92%;
+    --ring: 207 52% 76%;
+
+    --radius: 0.5rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-sans leading-relaxed;
+  }
+}

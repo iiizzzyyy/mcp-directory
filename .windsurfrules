@@ -1,0 +1,182 @@
+# 🛡️ MCP Directory – Windsurf IDE Rules
+
+## 🧱 Project Architecture
+
+- This is a **Model Context Protocol (MCP) directory** app using:
+  - Supabase MCP (auth, DB, edge functions)
+  - Netlify MCP (frontend hosting, edge deploy)
+  - Firecrawl MCP (external crawling & data ingestion)
+
+- The app consists of 4 main layers:
+  1. **Frontend (React + Tailwind + Shadcn UI)**
+  2. **Edge Functions (Supabase)**
+  3. **Database Schema (Postgres)**
+  4. **MCP Agents + Crawl Logic**
+
+---
+
+## 📐 Naming Conventions
+
+- File names: kebab-case (e.g., `server-card.tsx`, `cli-generator-tool.md`)
+- Function names: camelCase for JavaScript, snake_case for SQL
+- API endpoints:
+  - `/servers/search`
+  - `/servers/:id`
+  - `/servers/health`
+  - `/cli/generate`
+  - `/crawl/start`
+
+---
+
+## 🧠 Prompt Strategy
+
+- Use **modular prompts** for each feature or file
+- Follow the 3-part format:
+  1. 🎯 **Goal** – high-level intent
+  2. 🧠 **Task Breakdown** – detailed implementation steps
+  3. ✅ **Deliverables** – what the output must contain
+
+---
+
+## 🔄 Function Standards
+
+- Edge functions must:
+  - Be RESTful and stateless
+  - Validate input parameters
+  - Return typed JSON
+  - Use Supabase client and secure env vars
+  - Enforce RLS via policy (anonymous read allowed for public endpoints)
+
+- All GETs must support:
+  - Pagination (limit, offset) if data > 50
+  - Caching headers where safe
+
+---
+
+## 🖥️ UI Standards
+
+- Use `Shadcn UI` components and `TailwindCSS`
+- Ensure:
+  - Mobile responsiveness
+  - Accessible components (WCAG 2.1)
+  - Visual cues for server health and install method
+  - Keyboard navigation support
+
+---
+
+## 🗂️ Folder Structure
+/components
+	•	ServerCard.tsx
+	•	CLIGenerator.tsx
+
+/pages
+	•	Discover.tsx
+	•	ServerDetail.tsx
+
+/functions
+	•	crawl-start.ts
+	•	servers-search.ts
+	•	servers-id.ts
+	•	servers-health.ts
+	•	cli-generate.ts
+
+/prompts
+	•	*.md (prompt definition files)
+
+/schemas
+	•	servers.sql
+	•	server_status.sql
+
+---
+
+## 🔐 Supabase RLS Rules
+
+- Public anonymous users can:
+  - Read from `servers`, `server_status`, `compatibility`, `metrics`
+- Only internal edge functions can:
+  - Insert/update into `servers`, `server_status`, `metrics`
+  - Write via service role or elevated token
+
+---
+
+## 📬 API Error Handling
+
+- Always return structured errors:
+```json
+{
+  "error": true,
+  "message": "Missing server ID",
+  "code": 400
+}
+	•	Use HTTP status codes:
+	•	200 OK
+	•	400 Bad Request
+	•	404 Not Found
+	•	500 Internal Error
+
+
+⸻
+
+✅ Deployment & Build Rules
+	•	Frontend is deployed to Netlify from /frontend/dist
+	•	Use netlify.toml to define build and function routes
+	•	Edge functions bundled using Supabase MCP
+	•	Supabase keys and GitHub tokens stored securely in Netlify env vars
+
+⸻
+
+🧪 Testing Requirements
+	•	Every page/component must include:
+	•	Loading state
+	•	Empty state
+	•	Error state
+	•	Edge functions must:
+	•	Be testable via Postman or CLI script
+	•	Return mock-friendly outputs
+
+⸻
+
+🌍 Internationalization
+	•	Use English as default UI language
+	•	Plan for i18n-ready components with message keys
+	•	Add language field to server records when relevant
+
+⸻
+
+🧠 AI Agents (Optional)
+	•	MCP-aware LLMs like Claude/DeepSeek may be added for:
+	•	Install walkthroughs
+	•	Health diagnostics
+	•	Compatibility checks
+
+⸻
+
+✅ Always Do
+	•	Break large features into smaller prompts
+	•	Use code comments in all functions
+	•	Define types/interfaces in a separate types/ folder
+	•	Link prompts to actual output files clearly
+
+🚫 Never Do
+	•	Mix inline type definitions
+	•	Hardcode server IDs or URLs
+	•	Block anonymous reads on public endpoints
+	•	Rely on client-side only for install command logic
+
+⸻
+- Do not give me code unless I explicitly ask for it.
+- Guide me in problem-solving instead of providing direct answers.
+- When I ask about programming concepts (e.g., "What is a hook?"), give me a direct and clear explanation.
+- Break problems into smaller, manageable steps and help me think through them.
+- Ask leading questions and provide hints instead of just telling me the answer.
+- Encourage me to debug independently before offering suggestions.
+- Refer me to relevant documentation instead of providing solutions.
+- Encourage modular thinking—breaking problems into reusable components.
+- Remind me to reflect on what I learned after solving an issue.
+- If I explicitly ask for code (e.g., "Give me the code"), then you can provide it.
+
+- Encourage me to read and understand error messages instead of just fixing the issue for me.
+- Help me identify patterns in my mistakes so I can improve my debugging skills.
+- Suggest different approaches instead of leading me to one specific solution.
+- Guide me toward using console.log(), browser dev tools, and other debugging techniques.
+- Help me understand how to search effectively (e.g., Googling error messages or checking documentation

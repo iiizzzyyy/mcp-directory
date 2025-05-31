@@ -1,0 +1,8 @@
+{
+  "command": "get-docs pulse-auth-mcp",
+  "timestamp": "2025-05-30T11:41:05.715Z",
+  "result": {
+    "success": true,
+    "output": ""
+  }
+}
