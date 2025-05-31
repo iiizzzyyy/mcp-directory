@@ -9,31 +9,42 @@ interface InstallInstruction {
   platform: string;
   icon_url: string | null;
   install_command: string;
+  additional_steps?: string | null;
+  requirements?: string | null;
 }
 
 interface InstallationTabProps {
-  serverId: string;
+  serverId?: string;
   defaultInstallCommand?: string;
+  server?: {
+    id: string;
+    name: string;
+    install_command?: string;
+  };
 }
 
 export default function InstallationTab({ 
   serverId, 
-  defaultInstallCommand 
+  defaultInstallCommand,
+  server
 }: InstallationTabProps) {
+  // Handle both cases: when serverId is directly provided or when server object is provided
+  const effectiveServerId = serverId || server?.id;
+  const effectiveDefaultCommand = defaultInstallCommand || server?.install_command;
   const [instructions, setInstructions] = useState<InstallInstruction[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchInstructions = async () => {
-      if (!serverId) return;
+      if (!effectiveServerId) return;
       
       try {
         setLoading(true);
         setError(null);
         
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/servers/${serverId}/install`
+          `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/servers-install?id=${effectiveServerId}`
         );
         
         if (!response.ok) {
@@ -51,7 +62,7 @@ export default function InstallationTab({
     };
 
     fetchInstructions();
-  }, [serverId]);
+  }, [effectiveServerId]);
 
   if (loading) {
     return (
@@ -83,12 +94,12 @@ export default function InstallationTab({
           No specific installation instructions available for this server.
         </p>
         
-        {defaultInstallCommand && (
+        {effectiveDefaultCommand && (
           <div className="mt-4">
             <h3 className="font-medium mb-2">Generic Installation</h3>
             <InstallBlock
               platform="Default"
-              installCommand={defaultInstallCommand}
+              installCommand={effectiveDefaultCommand}
             />
           </div>
         )}
@@ -99,12 +110,17 @@ export default function InstallationTab({
   return (
     <div className="space-y-6">
       <h2 className="text-xl font-semibold mb-4">Installation Instructions</h2>
+      <p className="text-gray-600 mb-4">
+        These are platform-specific installation instructions for {server?.name || "this MCP server"}.
+      </p>
       {instructions.map((instruction, index) => (
         <InstallBlock
           key={index}
           platform={instruction.platform}
           icon={instruction.icon_url || undefined}
           installCommand={instruction.install_command}
+          additionalSteps={instruction.additional_steps || undefined}
+          requirements={instruction.requirements || undefined}
         />
       ))}
     </div>
