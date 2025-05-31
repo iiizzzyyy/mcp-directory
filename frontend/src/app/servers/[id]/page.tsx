@@ -99,13 +99,31 @@ async function getServerDetail(id: string): Promise<Server | null> {
       // If UUID, query directly by ID
       serverQuery = await supabase.from("servers").select("*").eq("id", id).maybeSingle();
     } else {
-      // If slug, first try to match the slug
+      // First try: exact match by slug
       serverQuery = await supabase.from("servers").select("*").eq("slug", id).maybeSingle();
       
-      // If no match by slug, try to match by name (converting slug to name)
+      // Second try: exact match by name
+      if (!serverQuery.data && !serverQuery.error) {
+        serverQuery = await supabase.from("servers").select("*").eq("name", id).maybeSingle();
+      }
+      
+      // Third try: case-insensitive match by name
+      if (!serverQuery.data && !serverQuery.error) {
+        serverQuery = await supabase.from("servers").select("*").ilike("name", id).maybeSingle();
+      }
+      
+      // Fourth try: slug to name conversion (replacing hyphens with spaces)
       if (!serverQuery.data && !serverQuery.error) {
         serverQuery = await supabase.from("servers").select("*")
           .ilike("name", id.replace(/-/g, " "))
+          .maybeSingle();
+      }
+      
+      // Fifth try: partial name match as fallback
+      if (!serverQuery.data && !serverQuery.error) {
+        serverQuery = await supabase.from("servers").select("*")
+          .ilike("name", `%${id}%`)
+          .limit(1)
           .maybeSingle();
       }
     }
