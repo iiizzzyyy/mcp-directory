@@ -33,9 +33,9 @@ The MCP Directory consists of several integrated components:
 ## Getting Started
 
 1. Clone this repository
-2. Install dependencies with `npm install` in the frontend directory
-3. Set up environment variables (see `.env.example`)
-4. Run the development server with `npm run dev`
+2. Install dependencies with `npm install` inside the `frontend` directory
+3. Copy `frontend/.env.example` to `.env` and provide your Supabase credentials
+4. Run the development server with `npm run dev` from the `frontend` folder
 
 ## Database Schema
 
@@ -57,3 +57,23 @@ Detailed documentation for specific features can be found in the `docs/` directo
 ## Deployment
 
 This project is deployed on Vercel with Supabase providing the backend services.
+
+## Data Sync & Crawler
+
+Use the Node.js crawler in the `crawler/` directory to import servers from other directories.
+
+1. Copy `crawler/.env.example` to `crawler/.env` and fill in the required API keys.
+2. Run `npm install` inside `crawler/`.
+3. Execute `npm start` to begin crawling.
+
+## Running Supabase Edge Functions Locally
+
+Install the [Supabase CLI](https://supabase.com/docs/guides/cli). With the CLI running, you can test edge functions:
+
+```bash
+supabase functions serve health-ping-all
+```
+
+Scheduled functions such as `health-ping-all` can also be invoked manually with `supabase functions invoke health-ping-all`.
+
+Licensed under the MIT License. See [LICENSE](LICENSE).

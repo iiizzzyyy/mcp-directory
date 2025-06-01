@@ -1,14 +1,24 @@
-import { serve } from 'https://deno.land/std@0.177.0/http/server.ts';
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { corsHeaders } from '../_shared/cors.ts';
-
-// Initialize Supabase client
-const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
-const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
-const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 // Health check timeout in ms (3 seconds)
 const TIMEOUT_MS = 3000;
+
+interface Server {
+  id: string;
+  name: string;
+  url?: string | null;
+  api_url?: string | null;
+  health_url?: string | null;
+  github_url?: string | null;
+}
+
+interface HealthCheckResult {
+  status: 'online' | 'offline' | 'degraded' | 'unknown';
+  responseTime: number;
+  error?: string | null;
+  method: string;
+}
 
 /**
  * Health check monitor for MCP servers
@@ -19,17 +29,22 @@ const TIMEOUT_MS = 3000;
  * 3. Records the results in the health_data table
  * 4. Updates the server status based on the health check results
  */
-serve(async (req) => {
-  // Handle CORS preflight requests
+Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders });
   }
 
   try {
+    // Initialize Supabase client inside the function for better security
+    const supabase = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    );
+
     // Get all active servers
     const { data: servers, error: serversError } = await supabase
       .from('servers')
-      .select('id, name, url, api_url')
+      .select('id, name, url, api_url, health_url, github_url')
       .is('archived', false);
     
     if (serversError) {
@@ -37,12 +52,14 @@ serve(async (req) => {
     }
     
     const results = [];
+    let checked = 0;
     
     // Process each server
-    for (const server of servers) {
+    for (const server of servers as Server[]) {
       try {
         // Perform health check
         const healthData = await checkServerHealth(server);
+        checked++;
         
         // Record health check result in health_data table
         const { error: insertError } = await supabase
@@ -52,7 +69,8 @@ serve(async (req) => {
             status: healthData.status,
             response_time_ms: healthData.responseTime,
             error_message: healthData.error || null,
-            check_method: healthData.method
+            check_method: healthData.method,
+            last_check_time: new Date().toISOString()
           });
         
         if (insertError) {
@@ -84,7 +102,7 @@ serve(async (req) => {
           server_id: server.id,
           name: server.name,
           status: 'error',
-          error: err.message
+          error: (err as Error).message
         });
       }
     }
@@ -93,7 +111,7 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({ 
         success: true, 
-        servers_checked: servers.length,
+        servers_checked: checked,
         results 
       }),
       { 
@@ -110,7 +128,7 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({ 
         success: false, 
-        error: error.message 
+        error: (error as Error).message 
       }),
       { 
         status: 500,
@@ -123,19 +141,77 @@ serve(async (req) => {
   }
 });
 
+// This function was removed to eliminate duplicate implementation
+
+/**
+ * Fetch with timeout functionality
+ * 
+ * @param url The URL to fetch
+ * @param options Fetch options
+ * @returns Response object with added responseTime property
+ */
+async function fetchWithTimeout(url: string, options = {}) {
+  const startTime = Date.now();
+  
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), TIMEOUT_MS);
+  
+  try {
+    const response = await fetch(url, {
+      ...options,
+      signal: controller.signal,
+    });
+    
+    const responseTime = Date.now() - startTime;
+    
+    // Add response time to the response object
+    return { 
+      ...response, 
+      responseTime 
+    };
+  } catch (err) {
+    if ((err as Error).name === 'AbortError') {
+      throw new Error(`Request timeout after ${TIMEOUT_MS}ms`);
+    }
+    throw err;
+  } finally {
+    clearTimeout(id);
+  }
+}
+
 /**
  * Performs a health check on a server using multiple methods
  * 
  * @param server The server object with id, name, url and api_url
  * @returns Object containing status, response time, and error message
  */
-async function checkServerHealth(server) {
+async function checkServerHealth(server: Server): Promise<HealthCheckResult> {
   // Try multiple health check methods in priority order:
-  // 1. API URL health endpoint
-  // 2. Base URL health endpoint
-  // 3. Simple ping to base URL
+  // 1. Dedicated health URL if available
+  // 2. API URL health endpoint
+  // 3. Base URL health endpoint
+  // 4. Simple ping to base URL or github URL
   
-  // Method 1: Check API URL health endpoint
+  // Method 1: Check dedicated health URL if available
+  if (server.health_url) {
+    try {
+      const healthUrl = server.health_url;
+      const result = await fetchWithTimeout(healthUrl);
+      
+      if (result.ok) {
+        return {
+          status: 'online',
+          responseTime: result.responseTime,
+          method: 'health_url'
+        };
+      }
+    } catch (err) {
+      // Continue to next method if this fails
+      console.log(`Health URL check failed for ${server.name}: ${(err as Error).message}`);
+    }
+  }
+  
+  // Method 2: Check API URL health endpoint
   if (server.api_url) {
     try {
       const apiHealthUrl = `${server.api_url.replace(/\/$/, '')}/health`;
@@ -150,11 +226,11 @@ async function checkServerHealth(server) {
       }
     } catch (err) {
       // Continue to next method if this fails
-      console.log(`API health endpoint check failed for ${server.name}: ${err.message}`);
+      console.log(`API health endpoint check failed for ${server.name}: ${(err as Error).message}`);
     }
   }
   
-  // Method 2: Check base URL health endpoint
+  // Method 3: Check base URL health endpoint
   if (server.url) {
     try {
       const baseHealthUrl = `${server.url.replace(/\/$/, '')}/health`;
@@ -169,14 +245,14 @@ async function checkServerHealth(server) {
       }
     } catch (err) {
       // Continue to next method if this fails
-      console.log(`Base health endpoint check failed for ${server.name}: ${err.message}`);
+      console.log(`Base health endpoint check failed for ${server.name}: ${(err as Error).message}`);
     }
   }
   
-  // Method 3: Simple ping to base URL
-  if (server.url) {
+  // Method 4: Simple ping to base URL or github URL
+  const pingUrl = server.url || server.github_url;
+  if (pingUrl) {
     try {
-      const pingUrl = server.url;
       const result = await fetchWithTimeout(pingUrl);
       
       if (result.ok) {
@@ -204,8 +280,8 @@ async function checkServerHealth(server) {
     } catch (err) {
       return {
         status: 'offline',
-        responseTime: null,
-        error: err.message,
+        responseTime: 0,
+        error: (err as Error).message,
         method: 'base_url_ping'
       };
     }
@@ -213,45 +289,9 @@ async function checkServerHealth(server) {
   
   // If we reach here, all methods failed
   return {
-    status: 'offline',
-    responseTime: null,
+    status: 'unknown',
+    responseTime: 0,
     error: 'No valid URL available for health check',
     method: 'none'
   };
-}
-
-/**
- * Fetch with timeout functionality
- * 
- * @param url The URL to fetch
- * @param options Fetch options
- * @returns Response object with added responseTime property
- */
-async function fetchWithTimeout(url, options = {}) {
-  const startTime = Date.now();
-  
-  const controller = new AbortController();
-  const id = setTimeout(() => controller.abort(), TIMEOUT_MS);
-  
-  try {
-    const response = await fetch(url, {
-      ...options,
-      signal: controller.signal,
-    });
-    
-    const responseTime = Date.now() - startTime;
-    
-    // Add response time to the response object
-    return { 
-      ...response, 
-      responseTime 
-    };
-  } catch (err) {
-    if (err.name === 'AbortError') {
-      throw new Error(`Request timeout after ${TIMEOUT_MS}ms`);
-    }
-    throw err;
-  } finally {
-    clearTimeout(id);
-  }
 }
