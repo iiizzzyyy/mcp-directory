@@ -17,11 +17,22 @@ export async function GET(request: NextRequest) {
   
   try {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    
+    if (!supabaseServiceKey) {
+      console.error('Missing SUPABASE_SERVICE_ROLE_KEY environment variable');
+      return NextResponse.json(
+        { success: false, error: 'Server configuration error' },
+        { status: 500 }
+      );
+    }
+    
     const response = await fetch(
       `${supabaseUrl}/functions/v1/server-tools?id=${serverId}`,
       {
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${supabaseServiceKey}`
         },
       }
     );
