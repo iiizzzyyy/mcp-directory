@@ -1,28 +1,23 @@
 'use client';
 
 import Link from 'next/link';
-import { Server } from '@/lib/api-client';
+import { Server } from '@/lib/types/index';
 import { ServerCard } from '@/components/server-card';
 import { Skeleton } from '@/components/ui/skeleton';
 import ClientPagination from './pagination-client';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertCircle } from 'lucide-react';
+import { PaginationMeta } from '@/lib/data-fetching';
 
 interface ServersPageContentProps {
   servers: Server[];
-  totalCount: number;
-  currentPage: number;
-  pageSize: number;
-  totalPages: number;
+  pagination: PaginationMeta;
   error?: string;
 }
 
 export default function ServersPageContent({
   servers,
-  totalCount,
-  currentPage,
-  pageSize,
-  totalPages,
+  pagination,
   error
 }: ServersPageContentProps) {
   return (
@@ -59,13 +54,15 @@ export default function ServersPageContent({
         )}
       </div>
       
-      {totalCount > 0 && (
-        <ClientPagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          totalCount={totalCount}
-          pageSize={pageSize}
-        />
+      {servers.length > 0 && pagination.totalCount > 0 && (
+        <div className="mt-8">
+          <ClientPagination
+            currentPage={pagination.currentPage}
+            totalPages={pagination.totalPages}
+            totalCount={pagination.totalCount}
+            pageSize={pagination.pageSize}
+          />
+        </div>
       )}
     </div>
   );

@@ -5,15 +5,21 @@ import { Check, Copy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
-interface ApiTabProps {
-  server: {
+import { ApiTabProps as BaseApiTabProps } from '@/lib/types';
+
+interface ApiTabProps extends BaseApiTabProps {
+  // We'll keep the original implementation which expects a server object
+  // but we'll also support the new pattern with serverId
+  server?: {
     id: string;
     name: string;
     slug?: string;
   };
 }
 
-export default function ApiTab({ server }: ApiTabProps) {
+export default function ApiTab({ server, serverId }: ApiTabProps) {
+  // For compatibility with both prop patterns
+  const id = serverId || (server?.id);
   const [copiedSnippet, setCopiedSnippet] = useState<string | null>(null);
   const [activeLanguage, setActiveLanguage] = useState('typescript');
 

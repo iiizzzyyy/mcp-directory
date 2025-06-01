@@ -1,13 +1,67 @@
 import { notFound } from "next/navigation";
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
-import { cookies } from "next/headers";
-import { ServerDetailContent } from "@/components/server-detail/server-detail-content";
+import { Suspense } from 'react';
+import { Metadata, ResolvingMetadata } from 'next';
+import { getServerDetail } from '@/lib/data-fetching';
+import { Server } from '@/lib/types/index';
+import { ServerDetailClient } from './page-client';
+import ServerDetailLoading from './loading';
+
+// Import server components
+import ServerInstall from "@/components/server-detail/ServerInstall";
+import ServerTools from "@/components/server-detail/ServerTools";
+import ServerChangelog from "@/components/server-detail/ServerChangelog";
+import ServerCompatibility from "@/components/server-detail/ServerCompatibility";
+import ServerHealth from "@/components/server-detail/ServerHealth";
+import ApiTab from "@/components/server-detail/ApiTab";
+
+// Fallback data for error states
+import { mockServers } from "@/lib/mock-data";
 
 // Force dynamic rendering for all server detail pages
 export const dynamic = "force-dynamic";
 export const revalidate = 0; // No cache, always fetch fresh data
 
-// Define the main page component to fetch and display server details
+/**
+ * Generate metadata for server detail page
+ */
+export async function generateMetadata({ 
+  params 
+}: { 
+  params: { id: string } 
+}): Promise<Metadata> {
+  try {
+    const server = await getServerDetail(params.id);
+    
+    if (!server) {
+      return {
+        title: 'Server Not Found',
+        description: 'The requested MCP server could not be found.'
+      };
+    }
+    
+    return {
+      title: `${server.name} | MCP Directory`,
+      description: server.description || 'View details about this MCP server',
+      openGraph: {
+        title: server.name,
+        description: server.description || 'MCP Server Details',
+        type: 'website'
+      }
+    };
+  } catch (error) {
+    return {
+      title: 'Error | MCP Directory',
+      description: 'Error loading server details'
+    };
+  }
+}
+
+/**
+ * Server Component: Server Detail Page
+ * 
+ * This is a React Server Component that fetches server data
+ * and renders both client and server components.
+ */
 export default async function ServerDetailPage({ params }: { params: { id: string } }) {
   try {
     // Extract the server ID from the URL params
@@ -25,126 +79,75 @@ export default async function ServerDetailPage({ params }: { params: { id: strin
       return notFound();
     }
     
-    // Render the server detail page with the retrieved data
-    return <ServerDetailContent server={server} />;
+    return (
+      <div>
+        {/* Client component for UI interactions */}
+        <ServerDetailClient server={server} />
+        
+        {/* Server components for tab content with their own data fetching */}
+        <div id="installation-tab-content" style={{ display: 'contents' }}>
+          <ServerInstall 
+            serverId={server.id} 
+            serverName={server.name} 
+            defaultInstallCommand={server.install_command || ''} 
+          />
+        </div>
+        
+        <div id="tools-tab-content" style={{ display: 'contents' }}>
+          <ServerTools 
+            serverId={server.id} 
+            serverName={server.name} 
+          />
+        </div>
+        
+        <div id="api-tab-content" style={{ display: 'contents' }}>
+          <ApiTab 
+            serverId={server.id} 
+          />
+        </div>
+        
+        <div id="compatibility-tab-content" style={{ display: 'contents' }}>
+          <ServerCompatibility 
+            serverId={server.id} 
+          />
+        </div>
+        
+        <div id="metrics-tab-content" style={{ display: 'contents' }}>
+          <ServerHealth 
+            serverId={server.id} 
+          />
+        </div>
+      </div>
+    );
   } catch (error) {
     // Handle errors gracefully by showing error UI
     console.error("Error in server detail page:", error);
     
     // Get mock data for fallback
     const { mockServers } = await import("@/lib/mock-data");
-    const fallbackServer = mockServers[0];
+    
+    // Create a properly typed fallback server with correct health_status
+    const fallbackServer: Server = {
+      id: mockServers[0].id,
+      name: mockServers[0].name,
+      description: mockServers[0].description,
+      category: mockServers[0].category,
+      tags: mockServers[0].tags,
+      platform: mockServers[0].platform,
+      install_method: mockServers[0].install_method,
+      stars: mockServers[0].stars,
+      health_status: mockServers[0].health_status as 'online' | 'offline' | 'degraded' | 'unknown',
+      last_checked: mockServers[0].last_updated,
+      github_url: mockServers[0].github_url,
+      slug: mockServers[0].name.toLowerCase().replace(/\s+/g, '-')
+    };
     
     // Return error state to the UI component
     return (
-      <ServerDetailContent 
+      <ServerDetailClient 
         server={fallbackServer} 
         error={error instanceof Error ? error.message : "Failed to load server data"}
       />
     );
-  }
-}
-
-// Interface for Server type if not already imported
-interface Server {
-  id: string;
-  name: string;
-  description: string;
-  slug?: string;
-  github_url?: string;
-  stars?: number;
-  forks?: number;
-  last_updated?: string;
-  category?: string;
-  platform?: string;
-  contributors?: number;
-  tags?: string[];
-  install_method?: string;
-  compatibility?: {
-    nodejs?: boolean;
-    python?: boolean;
-    go?: boolean;
-    java?: boolean;
-    rust?: boolean;
-    [key: string]: boolean | undefined;
-  };
-  health?: {
-    status?: string;
-    uptime?: number;
-    history?: Array<{
-      date: string;
-      status: string;
-    }>;
-  };
-  changelog?: Array<{
-    version: string;
-    date: string;
-    changes: string[];
-  }>;
-}
-
-// Get server details directly from Supabase
-async function getServerDetail(id: string): Promise<Server | null> {
-  // Create a Supabase client for server component
-  const supabase = createServerComponentClient({ cookies });
-  
-  try {
-    console.log(`Fetching server details for ID: ${id}`);
-    
-    // Check if the ID is a UUID or slug
-    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
-    
-    let serverQuery;
-    if (isUuid) {
-      // If UUID, query directly by ID
-      serverQuery = await supabase.from("servers").select("*").eq("id", id).maybeSingle();
-    } else {
-      // First try: exact match by slug
-      serverQuery = await supabase.from("servers").select("*").eq("slug", id).maybeSingle();
-      
-      // Second try: exact match by name
-      if (!serverQuery.data && !serverQuery.error) {
-        serverQuery = await supabase.from("servers").select("*").eq("name", id).maybeSingle();
-      }
-      
-      // Third try: case-insensitive match by name
-      if (!serverQuery.data && !serverQuery.error) {
-        serverQuery = await supabase.from("servers").select("*").ilike("name", id).maybeSingle();
-      }
-      
-      // Fourth try: slug to name conversion (replacing hyphens with spaces)
-      if (!serverQuery.data && !serverQuery.error) {
-        serverQuery = await supabase.from("servers").select("*")
-          .ilike("name", id.replace(/-/g, " "))
-          .maybeSingle();
-      }
-      
-      // Fifth try: partial name match as fallback
-      if (!serverQuery.data && !serverQuery.error) {
-        serverQuery = await supabase.from("servers").select("*")
-          .ilike("name", `%${id}%`)
-          .limit(1)
-          .maybeSingle();
-      }
-    }
-    
-    const { data: server, error } = serverQuery;
-    
-    if (error) {
-      console.error("Error fetching server from Supabase:", error.message);
-      throw new Error(`Database error: ${error.message}`);
-    }
-    
-    if (server) {
-      console.log("Server details fetched successfully from database");
-      return server as Server;
-    }
-    
-    // No server found, but no error either
-    console.log("No matching server found in database");
-    return null;
-  } catch (error) {
-    console.error("Error in getServerDetail:", error);
-    throw error;
   }
 }

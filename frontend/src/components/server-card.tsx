@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { Server } from '@/lib/api-client';
+import { Server, HealthStatus } from '@/lib/types/index';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { GitHubLogoIcon, StarFilledIcon, ActivityLogIcon } from '@radix-ui/react-icons';

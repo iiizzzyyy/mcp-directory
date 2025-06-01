@@ -26,6 +26,15 @@ export default function RootLayout({
           </LayoutShell>
           <Toaster />
         </AuthProvider>
+        {/* Client-side detection script (migrated from _document.js) */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              // This script helps handle client-side detection
+              window.__IS_CLIENT__ = true;
+            `,
+          }}
+        />
       </body>
     </html>
   )
