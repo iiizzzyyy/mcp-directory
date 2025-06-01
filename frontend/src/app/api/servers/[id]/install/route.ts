@@ -36,23 +36,26 @@ export async function GET(
     
     // First attempt: Try direct fetch to edge function with service role key
     try {
-      console.log('Fetching installation instructions from edge function');
+      console.log('Fetching installation instructions from edge function for server:', id);
       
+      // Updated to use POST request with the ID in the body
       const response = await fetch(
-        `${supabaseUrl}/functions/v1/servers-install?id=${id}`,
+        `${supabaseUrl}/functions/v1/servers-install`,
         {
+          method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${supabaseServiceKey}`,
             'apikey': supabaseServiceKey
           },
+          body: JSON.stringify({ id })
         }
       );
       
       if (!response.ok) {
         const errorText = await response.text();
         console.error(`Edge function returned error status ${response.status}:`, errorText);
-        throw new Error(`Edge function error: ${response.status}`);
+        throw new Error(`Edge function error: ${response.status} - ${errorText}`);
       }
       
       const installData = await response.json();
