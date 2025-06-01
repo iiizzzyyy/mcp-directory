@@ -51,3 +51,7 @@ yarn-error.log*
 # Supabase
 supabase/.branches
 supabase/.temp
+
+# Local secrets
+frontend/.vercel.env
+scripts/supabase_key.txt
