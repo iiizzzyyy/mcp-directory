@@ -8,15 +8,14 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { formatDistanceToNow } from 'date-fns';
 
-// Import existing components
-import CompatibilityMatrix from './CompatibilityMatrix';
-import InstallationTab from './InstallationTab';
-import ToolsTab from './ToolsTab';
+// Import server components
+import ServerInstall from './ServerInstall';
+import ServerTools from './ServerTools';
+import ServerChangelog from './ServerChangelog';
+import ServerCompatibility from './ServerCompatibility';
+import ServerHealth from './ServerHealth';
+import ServerDocumentation from './ServerDocumentation';
 import ApiTab from './ApiTab';
-import StaticDocumentationSection from './StaticDocumentationSection';
-import HealthChartWrapper from './HealthChartWrapper';
-import CompatibilityMatrixWrapper from './CompatibilityMatrixWrapper';
-import ChangelogSectionWrapper from './ChangelogSectionWrapper';
 
 // Server interface
 export interface Server {
@@ -209,6 +208,14 @@ export function ServerDetailContent({ server, error }: ServerDetailContentProps)
             <Code className="h-4 w-4" />
             <span>API</span>
           </TabsTrigger>
+
+          <TabsTrigger 
+            value="docs" 
+            className="rounded-md flex items-center gap-2 data-[state=active]:bg-gray-100 data-[state=active]:text-gray-900 px-4"
+          >
+            <svg className="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+            <span>Documentation</span>
+          </TabsTrigger>
         </TabsList>
         
         {/* Overview tab - all server info */}
@@ -274,7 +281,11 @@ export function ServerDetailContent({ server, error }: ServerDetailContentProps)
               <div>
                 <h3 className="text-lg font-medium mb-3">Installation</h3>
                 <div className="border rounded-lg">
-                  <InstallationTab server={server} />
+                  <ServerInstall 
+                    serverId={server.id} 
+                    serverName={server.name} 
+                    defaultInstallCommand={server.install_command} 
+                  />
                 </div>
               </div>
             </div>
@@ -285,7 +296,7 @@ export function ServerDetailContent({ server, error }: ServerDetailContentProps)
               <div>
                 <h3 className="text-lg font-medium mb-3">Documentation</h3>
                 <div className="border rounded-lg p-4">
-                  <StaticDocumentationSection serverId={server.id} />
+                  <ServerDocumentation serverId={server.id} />
                 </div>
               </div>
               
@@ -293,7 +304,7 @@ export function ServerDetailContent({ server, error }: ServerDetailContentProps)
               <div>
                 <h3 className="text-lg font-medium mb-3">Health Status</h3>
                 <div className="border rounded-lg p-4">
-                  <HealthChartWrapper serverId={server.id} />
+                  <ServerHealth serverId={server.id} />
                 </div>
               </div>
               
@@ -301,7 +312,7 @@ export function ServerDetailContent({ server, error }: ServerDetailContentProps)
               <div>
                 <h3 className="text-lg font-medium mb-3">Compatibility</h3>
                 <div className="border rounded-lg p-4">
-                  <CompatibilityMatrixWrapper serverId={server.id} />
+                  <ServerCompatibility serverId={server.id} />
                 </div>
               </div>
               
@@ -309,21 +320,25 @@ export function ServerDetailContent({ server, error }: ServerDetailContentProps)
               <div>
                 <h3 className="text-lg font-medium mb-3">Latest Changes</h3>
                 <div className="border rounded-lg p-4">
-                  <ChangelogSectionWrapper serverId={server.id} />
+                  <ServerChangelog serverId={server.id} />
                 </div>
               </div>
             </div>
           </div>
         </TabsContent>
-        
         {/* Tools tab - server tools */}
         <TabsContent value="tools" className="pt-6">
-          <ToolsTab server={server} />
+          <ServerTools serverId={server.id} serverName={server.name} />
         </TabsContent>
         
         {/* API tab - API integration */}
         <TabsContent value="api" className="pt-6">
           <ApiTab server={server} />
+        </TabsContent>
+        
+        {/* Documentation tab */}
+        <TabsContent value="docs" className="pt-6">
+          <ServerDocumentation serverId={server.id} fullContent />
         </TabsContent>
       </Tabs>
     </div>
