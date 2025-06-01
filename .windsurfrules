@@ -4,7 +4,7 @@
 
 - This is a **Model Context Protocol (MCP) directory** app using:
   - Supabase MCP (auth, DB, edge functions)
-  - Netlify MCP (frontend hosting, edge deploy)
+  - Vercel CLI (frontend hosting, edge deploy)
   - Firecrawl MCP (external crawling & data ingestion)
 
 - The app consists of 4 main layers:
@@ -118,10 +118,11 @@
 ---
 
 ## ✅ Deployment & Build Rules
-- Frontend is deployed to Netlify from /frontend/dist
-- Use netlify.toml to define build and function routes
-- Edge functions bundled using Supabase MCP
-- Supabase keys and GitHub tokens stored securely in Netlify env vars
+- Frontend is deployed to Vercel from `/frontend`
+- Use `vercel.json` to define routes and function settings
+- Edge functions are bundled using Supabase MCP and triggered via Vercel functions or middleware
+- Supabase keys and GitHub tokens are stored securely in Vercel project environment variables
+
 
 ---
 
