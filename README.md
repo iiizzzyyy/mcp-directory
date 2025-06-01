@@ -4,6 +4,7 @@ A comprehensive directory for Model Context Protocol (MCP) servers with dynamic 
 
 ## Features
 
+- **Welcoming Landing Page**: Clear value proposition with hero section and registration CTA
 - **Server Discovery**: Browse and search across all available MCP servers
 - **Detailed Server Information**: View compatibility, health status, and installation instructions
 - **Tools Detection**: Automatic discovery and indexing of MCP server tools
