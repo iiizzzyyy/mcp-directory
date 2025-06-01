@@ -1,0 +1,1567 @@
+{
+  "timestamp": "2025-06-01T05:21:58.115Z",
+  "results": [
+    {
+      "server_name": "puppeteer-mcp",
+      "detection_tier": "standard_mcp_api",
+      "expected_tier": "standard_mcp_api",
+      "tools_detected": 7,
+      "expected_tools": 7,
+      "passed": true,
+      "execution_time_ms": 6871,
+      "tools": [
+        {
+          "id": "fc581ce6-8bb5-4ee0-8a74-7a981a5e1e8b",
+          "name": "puppeteer-mcp_tool_1",
+          "description": "Mock tool 1 for puppeteer-mcp",
+          "method": "POST",
+          "endpoint": "/api/puppeteer-mcp/tool1",
+          "detection_source": "standard_mcp_api",
+          "tool_parameters": [
+            {
+              "id": "202c0dd9-0fe6-4bc0-82a2-5dd343f22973",
+              "name": "param1",
+              "type": "string",
+              "required": true,
+              "description": "First parameter"
+            },
+            {
+              "id": "723e4c22-6867-48a5-b301-768cdc67d79f",
+              "name": "param2",
+              "type": "number",
+              "required": false,
+              "description": "Second parameter"
+            }
+          ]
+        },
+        {
+          "id": "80dd1e3c-30cf-4fd8-88e7-d1ad98d43ae4",
+          "name": "puppeteer-mcp_tool_2",
+          "description": "Mock tool 2 for puppeteer-mcp",
+          "method": "GET",
+          "endpoint": "/api/puppeteer-mcp/tool2",
+          "detection_source": "standard_mcp_api",
+          "tool_parameters": [
+            {
+              "id": "7b147611-1673-4ff8-aa4f-9227ebd703bc",
+              "name": "param1",
+              "type": "string",
+              "required": true,
+              "description": "First parameter"
+            },
+            {
+              "id": "4605ebd7-4f93-45aa-8b7b-ee74221fb174",
+              "name": "param2",
+              "type": "number",
+              "required": false,
+              "description": "Second parameter"
+            }
+          ]
+        },
+        {
+          "id": "4989ebf7-f080-444e-8af6-bc76c26d7485",
+          "name": "puppeteer-mcp_tool_3",
+          "description": "Mock tool 3 for puppeteer-mcp",
+          "method": "POST",
+          "endpoint": "/api/puppeteer-mcp/tool3",
+          "detection_source": "standard_mcp_api",
+          "tool_parameters": [
+            {
+              "id": "4aa1a386-3c0a-4b1d-9dd2-6dd4a874a0ee",
+              "name": "param1",
+              "type": "string",
+              "required": true,
+              "description": "First parameter"
+            },
+            {
+              "id": "7a844228-78df-4abc-af0d-4405cfbb15bc",
+              "name": "param2",
+              "type": "number",
+              "required": false,
+              "description": "Second parameter"
+            }
+          ]
+        },
+        {
+          "id": "88cd1d66-3901-4f58-82c9-579ec1f170c9",
+          "name": "puppeteer-mcp_tool_4",
+          "description": "Mock tool 4 for puppeteer-mcp",
+          "method": "GET",
+          "endpoint": "/api/puppeteer-mcp/tool4",
+          "detection_source": "standard_mcp_api",
+          "tool_parameters": [
+            {
+              "id": "2e727d9a-4451-434e-a204-fea3e173e3ec",
+              "name": "param1",
+              "type": "string",
+              "required": true,
+              "description": "First parameter"
+            },
+            {
+              "id": "1c24df80-b83f-4cb7-9a78-ab91c947b55d",
+              "name": "param2",
+              "type": "number",
+              "required": false,
+              "description": "Second parameter"
+            }
+          ]
+        },
+        {
+          "id": "fa293e3a-5693-4e77-b6a2-95b5acc859eb",
+          "name": "puppeteer-mcp_tool_5",
+          "description": "Mock tool 5 for puppeteer-mcp",
+          "method": "POST",
+          "endpoint": "/api/puppeteer-mcp/tool5",
+          "detection_source": "standard_mcp_api",
+          "tool_parameters": [
+            {
+              "id": "25b75cb0-4e36-42db-a2a6-b36b7686744e",
+              "name": "param1",
+              "type": "string",
+              "required": true,
+              "description": "First parameter"
+            },
+            {
+              "id": "4b3e2bdf-4693-440d-92f4-0426e560b1e4",
+              "name": "param2",
+              "type": "number",
+              "required": false,
+              "description": "Second parameter"
+            }
+          ]
+        },
+        {
+          "id": "c904433b-502a-4a81-bd7b-f2c292d7d501",
+          "name": "puppeteer-mcp_tool_6",
+          "description": "Mock tool 6 for puppeteer-mcp",
+          "method": "GET",
+          "endpoint": "/api/puppeteer-mcp/tool6",
+          "detection_source": "standard_mcp_api",
+          "tool_parameters": [
+            {
+              "id": "8e9d2a7b-30ae-40ab-ac1b-fdcafdd43dbc",
+              "name": "param1",
+              "type": "string",
+              "required": true,
+              "description": "First parameter"
+            },
+            {
+              "id": "92af6e51-8ef9-4340-9dd0-c74bde28e130",
+              "name": "param2",
+              "type": "number",
+              "required": false,
+              "description": "Second parameter"
+            }
+          ]
+        },
+        {
+          "id": "7d4f6a47-88c1-4ddd-a988-478b4b0a876a",
+          "name": "puppeteer-mcp_tool_7",
+          "description": "Mock tool 7 for puppeteer-mcp",
+          "method": "POST",
+          "endpoint": "/api/puppeteer-mcp/tool7",
+          "detection_source": "standard_mcp_api",
+          "tool_parameters": [
+            {
+              "id": "a08f0c9f-0c1e-4644-807c-a797e3f584c8",
+              "name": "param1",
+              "type": "string",
+              "required": true,
+              "description": "First parameter"
+            },
+            {
+              "id": "30a56cda-6a66-4f55-823e-b3f6d7cbb7f9",
+              "name": "param2",
+              "type": "number",
+              "required": false,
+              "description": "Second parameter"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "server_name": "supabase-mcp-server",
+      "detection_tier": "standard_mcp_api",
+      "expected_tier": "standard_mcp_api",
+      "tools_detected": 10,
+      "expected_tools": 10,
+      "passed": true,
+      "execution_time_ms": 7060,
+      "tools": [
+        {
+          "id": "da0f1c5f-718b-44e9-a157-9fddda67b799",
+          "name": "supabase-mcp-server_tool_1",
+          "description": "Mock tool 1 for supabase-mcp-server",
+          "method": "POST",
+          "endpoint": "/api/supabase-mcp-server/tool1",
+          "detection_source": "standard_mcp_api",
+          "tool_parameters": [
+            {
+              "id": "e12a26f9-eed0-43c4-9b8f-de7713658c4a",
+              "name": "param1",
+              "type": "string",
+              "required": true,
+              "description": "First parameter"
+            },
+            {
+              "id": "0aad7dde-9383-4210-aa1b-04a12fdbb892",
+              "name": "param2",
+              "type": "number",
+              "required": false,
+              "description": "Second parameter"
+            }
+          ]
+        },
+        {
+          "id": "6e44919d-7694-44c5-81ab-dfebc7bf967f",
+          "name": "supabase-mcp-server_tool_2",
+          "description": "Mock tool 2 for supabase-mcp-server",
+          "method": "GET",
+          "endpoint": "/api/supabase-mcp-server/tool2",
+          "detection_source": "standard_mcp_api",
+          "tool_parameters": [
+            {
+              "id": "9da8801a-5bbd-4275-9c41-88d8c508c506",
+              "name": "param1",
+              "type": "string",
+              "required": true,
+              "description": "First parameter"
+            },
+            {
+              "id": "8ce7d492-f4ab-4aef-b889-0fc8c4f0d5a0",
+              "name": "param2",
+              "type": "number",
+              "required": false,
+              "description": "Second parameter"
+            }
+          ]
+        },
+        {
+          "id": "fc4351b1-adcb-4cf7-9ce3-5c3ccfe1b0fe",
+          "name": "supabase-mcp-server_tool_3",
+          "description": "Mock tool 3 for supabase-mcp-server",
+          "method": "POST",
+          "endpoint": "/api/supabase-mcp-server/tool3",
+          "detection_source": "standard_mcp_api",
+          "tool_parameters": [
+            {
+              "id": "2e9844a4-f344-46e6-a21d-9678cd7f607c",
+              "name": "param1",
+              "type": "string",
+              "required": true,
+              "description": "First parameter"
+            },
+            {
+              "id": "8abfa260-5afc-41fa-8f2a-0078f29db734",
+              "name": "param2",
+              "type": "number",
+              "required": false,
+              "description": "Second parameter"
+            }
+          ]
+        },
+        {
+          "id": "43055ffe-1c3a-4b0e-be89-e83c761c4b6e",
+          "name": "supabase-mcp-server_tool_4",
+          "description": "Mock tool 4 for supabase-mcp-server",
+          "method": "GET",
+          "endpoint": "/api/supabase-mcp-server/tool4",
+          "detection_source": "standard_mcp_api",
+          "tool_parameters": [
+            {
+              "id": "21ed2e28-9522-4e61-897a-3b8bc34fef4f",
+              "name": "param1",
+              "type": "string",
+              "required": true,
+              "description": "First parameter"
+            },
+            {
+              "id": "3bc50e83-19a3-4533-a775-0326ade3844c",
+              "name": "param2",
+              "type": "number",
+              "required": false,
+              "description": "Second parameter"
+            }
+          ]
+        },
+        {
+          "id": "3cbcc488-c1af-419d-a9bd-0579dde90967",
+          "name": "supabase-mcp-server_tool_5",
+          "description": "Mock tool 5 for supabase-mcp-server",
+          "method": "POST",
+          "endpoint": "/api/supabase-mcp-server/tool5",
+          "detection_source": "standard_mcp_api",
+          "tool_parameters": [
+            {
+              "id": "10d05fef-21c8-4327-9d34-ad466d0cddb7",
+              "name": "param1",
+              "type": "string",
+              "required": true,
+              "description": "First parameter"
+            },
+            {
+              "id": "0ed5b57f-ef78-48cb-b3f7-34389d65a7b2",
+              "name": "param2",
+              "type": "number",
+              "required": false,
+              "description": "Second parameter"
+            }
+          ]
+        },
+        {
+          "id": "b9ee7c3e-e124-4ce3-9e95-2f6854ba84e3",
+          "name": "supabase-mcp-server_tool_6",
+          "description": "Mock tool 6 for supabase-mcp-server",
+          "method": "GET",
+          "endpoint": "/api/supabase-mcp-server/tool6",
+          "detection_source": "standard_mcp_api",
+          "tool_parameters": [
+            {
+              "id": "29fae2a5-a81e-4398-b2d9-1aa90911eb65",
+              "name": "param1",
+              "type": "string",
+              "required": true,
+              "description": "First parameter"
+            },
+            {
+              "id": "a0a75566-d940-40ce-8772-58d896210a47",
+              "name": "param2",
+              "type": "number",
+              "required": false,
+              "description": "Second parameter"
+            }
+          ]
+        },
+        {
+          "id": "94319bb4-9884-4788-bf18-d8130073cec7",
+          "name": "supabase-mcp-server_tool_7",
+          "description": "Mock tool 7 for supabase-mcp-server",
+          "method": "POST",
+          "endpoint": "/api/supabase-mcp-server/tool7",
+          "detection_source": "standard_mcp_api",
+          "tool_parameters": [
+            {
+              "id": "a1e40ef3-6125-410b-821f-f7f6f121a79b",
+              "name": "param1",
+              "type": "string",
+              "required": true,
+              "description": "First parameter"
+            },
+            {
+              "id": "cada1273-573b-4046-af99-deb6e510e5db",
+              "name": "param2",
+              "type": "number",
+              "required": false,
+              "description": "Second parameter"
+            }
+          ]
+        },
+        {
+          "id": "fed17233-3e7a-4688-abbc-e070ca9e48de",
+          "name": "supabase-mcp-server_tool_8",
+          "description": "Mock tool 8 for supabase-mcp-server",
+          "method": "GET",
+          "endpoint": "/api/supabase-mcp-server/tool8",
+          "detection_source": "standard_mcp_api",
+          "tool_parameters": [
+            {
+              "id": "10ec075c-ba9b-41a2-9441-e04ba22f193d",
+              "name": "param1",
+              "type": "string",
+              "required": true,
+              "description": "First parameter"
+            },
+            {
+              "id": "3a50c173-cd5b-4690-ad87-f6962092e0f6",
+              "name": "param2",
+              "type": "number",
+              "required": false,
+              "description": "Second parameter"
+            }
+          ]
+        },
+        {
+          "id": "b31763f0-2a3d-4e01-90c9-86eb5c5cf240",
+          "name": "supabase-mcp-server_tool_9",
+          "description": "Mock tool 9 for supabase-mcp-server",
+          "method": "POST",
+          "endpoint": "/api/supabase-mcp-server/tool9",
+          "detection_source": "standard_mcp_api",
+          "tool_parameters": [
+            {
+              "id": "9c1579aa-b9c1-4039-81e9-a8818791a15c",
+              "name": "param1",
+              "type": "string",
+              "required": true,
+              "description": "First parameter"
+            },
+            {
+              "id": "ee768e91-f97f-457c-bd91-3eaa412d745a",
+              "name": "param2",
+              "type": "number",
+              "required": false,
+              "description": "Second parameter"
+            }
+          ]
+        },
+        {
+          "id": "22e57ef5-d653-4c28-885d-1b05d02f8b27",
+          "name": "supabase-mcp-server_tool_10",
+          "description": "Mock tool 10 for supabase-mcp-server",
+          "method": "GET",
+          "endpoint": "/api/supabase-mcp-server/tool10",
+          "detection_source": "standard_mcp_api",
+          "tool_parameters": [
+            {
+              "id": "b2474f60-98be-4f68-b590-fb38a80be28c",
+              "name": "param1",
+              "type": "string",
+              "required": true,
+              "description": "First parameter"
+            },
+            {
+              "id": "d5bc845d-324e-4222-a825-e807aa21df6b",
+              "name": "param2",
+              "type": "number",
+              "required": false,
+              "description": "Second parameter"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "server_name": "linear-mcp",
+      "detection_tier": "standard_mcp_api",
+      "expected_tier": "standard_mcp_api",
+      "tools_detected": 12,
+      "expected_tools": 12,
+      "passed": true,
+      "execution_time_ms": 6849,
+      "tools": [
+        {
+          "id": "b40f20fc-73e0-43e2-a3b5-3cc54d6d7ccb",
+          "name": "linear-mcp_tool_1",
+          "description": "Mock tool 1 for linear-mcp",
+          "method": "POST",
+          "endpoint": "/api/linear-mcp/tool1",
+          "detection_source": "standard_mcp_api",
+          "tool_parameters": [
+            {
+              "id": "f2d23893-d106-4e08-bd6e-6f9cd489be59",
+              "name": "param1",
+              "type": "string",
+              "required": true,
+              "description": "First parameter"
+            },
+            {
+              "id": "9e57c4f6-8ffa-4673-85de-932b6c501a9b",
+              "name": "param2",
+              "type": "number",
+              "required": false,
+              "description": "Second parameter"
+            }
+          ]
+        },
+        {
+          "id": "2a35ab41-af68-4e32-9f60-269072d207b1",
+          "name": "linear-mcp_tool_2",
+          "description": "Mock tool 2 for linear-mcp",
+          "method": "GET",
+          "endpoint": "/api/linear-mcp/tool2",
+          "detection_source": "standard_mcp_api",
+          "tool_parameters": [
+            {
+              "id": "8b49ac8c-b506-43b4-b058-e6e0ca826ce9",
+              "name": "param1",
+              "type": "string",
+              "required": true,
+              "description": "First parameter"
+            },
+            {
+              "id": "9aab4e42-da35-416f-ace3-525df0d1a525",
+              "name": "param2",
+              "type": "number",
+              "required": false,
+              "description": "Second parameter"
+            }
+          ]
+        },
+        {
+          "id": "f88b2cd9-27ef-460b-903e-b84fb6d2ee77",
+          "name": "linear-mcp_tool_3",
+          "description": "Mock tool 3 for linear-mcp",
+          "method": "POST",
+          "endpoint": "/api/linear-mcp/tool3",
+          "detection_source": "standard_mcp_api",
+          "tool_parameters": [
+            {
+              "id": "2d03aaa4-14d3-4066-b736-dec0ed7cb8f0",
+              "name": "param1",
+              "type": "string",
+              "required": true,
+              "description": "First parameter"
+            },
+            {
+              "id": "8ec961bd-ee42-4fdb-8fe5-a1c2b2e33cd2",
+              "name": "param2",
+              "type": "number",
+              "required": false,
+              "description": "Second parameter"
+            }
+          ]
+        },
+        {
+          "id": "916a49b9-7398-44a4-bb38-e660c7570e02",
+          "name": "linear-mcp_tool_4",
+          "description": "Mock tool 4 for linear-mcp",
+          "method": "GET",
+          "endpoint": "/api/linear-mcp/tool4",
+          "detection_source": "standard_mcp_api",
+          "tool_parameters": [
+            {
+              "id": "c8fec52a-68d4-4e5d-b49a-1aa86c93b169",
+              "name": "param1",
+              "type": "string",
+              "required": true,
+              "description": "First parameter"
+            },
+            {
+              "id": "569ef717-dd98-4d01-b8fa-5a971ff1dbde",
+              "name": "param2",
+              "type": "number",
+              "required": false,
+              "description": "Second parameter"
+            }
+          ]
+        },
+        {
+          "id": "89fdd12f-a344-4f4a-9089-811578833997",
+          "name": "linear-mcp_tool_5",
+          "description": "Mock tool 5 for linear-mcp",
+          "method": "POST",
+          "endpoint": "/api/linear-mcp/tool5",
+          "detection_source": "standard_mcp_api",
+          "tool_parameters": [
+            {
+              "id": "cabcda9f-1259-48a1-9386-00acb26ac3b6",
+              "name": "param1",
+              "type": "string",
+              "required": true,
+              "description": "First parameter"
+            },
+            {
+              "id": "d3357561-5562-4b15-a1c1-35798bbd472a",
+              "name": "param2",
+              "type": "number",
+              "required": false,
+              "description": "Second parameter"
+            }
+          ]
+        },
+        {
+          "id": "37f736b4-178d-4918-94e7-669d5088a865",
+          "name": "linear-mcp_tool_6",
+          "description": "Mock tool 6 for linear-mcp",
+          "method": "GET",
+          "endpoint": "/api/linear-mcp/tool6",
+          "detection_source": "standard_mcp_api",
+          "tool_parameters": [
+            {
+              "id": "f36ead74-59e1-4974-93e3-bbf30248db29",
+              "name": "param1",
+              "type": "string",
+              "required": true,
+              "description": "First parameter"
+            },
+            {
+              "id": "0bef2edb-935e-4f36-80fa-94d3a9663370",
+              "name": "param2",
+              "type": "number",
+              "required": false,
+              "description": "Second parameter"
+            }
+          ]
+        },
+        {
+          "id": "d2519468-6cc8-486e-8077-62f8e772f7ee",
+          "name": "linear-mcp_tool_7",
+          "description": "Mock tool 7 for linear-mcp",
+          "method": "POST",
+          "endpoint": "/api/linear-mcp/tool7",
+          "detection_source": "standard_mcp_api",
+          "tool_parameters": [
+            {
+              "id": "ba103b88-bdf4-47f2-b467-77c6ac360d30",
+              "name": "param1",
+              "type": "string",
+              "required": true,
+              "description": "First parameter"
+            },
+            {
+              "id": "6207f402-8a87-45f1-a8a9-223f705e6446",
+              "name": "param2",
+              "type": "number",
+              "required": false,
+              "description": "Second parameter"
+            }
+          ]
+        },
+        {
+          "id": "0f540587-a5f2-43a5-8728-82eb18919e23",
+          "name": "linear-mcp_tool_8",
+          "description": "Mock tool 8 for linear-mcp",
+          "method": "GET",
+          "endpoint": "/api/linear-mcp/tool8",
+          "detection_source": "standard_mcp_api",
+          "tool_parameters": [
+            {
+              "id": "9a628996-ff27-4f3c-a9b8-723f0a591bfe",
+              "name": "param1",
+              "type": "string",
+              "required": true,
+              "description": "First parameter"
+            },
+            {
+              "id": "d478073b-e5cc-4b97-84e0-27a6ccd85db1",
+              "name": "param2",
+              "type": "number",
+              "required": false,
+              "description": "Second parameter"
+            }
+          ]
+        },
+        {
+          "id": "7a3a6df4-9e17-4258-92d3-7895086546e2",
+          "name": "linear-mcp_tool_9",
+          "description": "Mock tool 9 for linear-mcp",
+          "method": "POST",
+          "endpoint": "/api/linear-mcp/tool9",
+          "detection_source": "standard_mcp_api",
+          "tool_parameters": [
+            {
+              "id": "96f05fa9-d011-4c9a-9003-9e92d6853de6",
+              "name": "param1",
+              "type": "string",
+              "required": true,
+              "description": "First parameter"
+            },
+            {
+              "id": "75e3d488-1e5d-4780-96f1-9413deda052b",
+              "name": "param2",
+              "type": "number",
+              "required": false,
+              "description": "Second parameter"
+            }
+          ]
+        },
+        {
+          "id": "d2de50ad-f2fe-4c0a-a673-855ed2845312",
+          "name": "linear-mcp_tool_10",
+          "description": "Mock tool 10 for linear-mcp",
+          "method": "GET",
+          "endpoint": "/api/linear-mcp/tool10",
+          "detection_source": "standard_mcp_api",
+          "tool_parameters": [
+            {
+              "id": "6037cafb-bce9-441d-b969-c3b63908d09a",
+              "name": "param1",
+              "type": "string",
+              "required": true,
+              "description": "First parameter"
+            },
+            {
+              "id": "5e84e650-4fdc-4e94-922f-063b14d4cc50",
+              "name": "param2",
+              "type": "number",
+              "required": false,
+              "description": "Second parameter"
+            }
+          ]
+        },
+        {
+          "id": "f4f3eded-67a3-472d-a5b6-465620847013",
+          "name": "linear-mcp_tool_11",
+          "description": "Mock tool 11 for linear-mcp",
+          "method": "POST",
+          "endpoint": "/api/linear-mcp/tool11",
+          "detection_source": "standard_mcp_api",
+          "tool_parameters": [
+            {
+              "id": "c73a4d0c-f80d-4314-ac98-b7e089271309",
+              "name": "param1",
+              "type": "string",
+              "required": true,
+              "description": "First parameter"
+            },
+            {
+              "id": "6c696207-c592-42e6-8a00-d7b6351d308f",
+              "name": "param2",
+              "type": "number",
+              "required": false,
+              "description": "Second parameter"
+            }
+          ]
+        },
+        {
+          "id": "b241cce5-e3d0-47a2-9981-6a7b27f58511",
+          "name": "linear-mcp_tool_12",
+          "description": "Mock tool 12 for linear-mcp",
+          "method": "GET",
+          "endpoint": "/api/linear-mcp/tool12",
+          "detection_source": "standard_mcp_api",
+          "tool_parameters": [
+            {
+              "id": "27f0e230-5262-4d02-a9ab-adcd1a1cb2cf",
+              "name": "param1",
+              "type": "string",
+              "required": true,
+              "description": "First parameter"
+            },
+            {
+              "id": "c98bb144-d461-4013-9720-b329b779dc05",
+              "name": "param2",
+              "type": "number",
+              "required": false,
+              "description": "Second parameter"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "server_name": "firecrawl-mcp",
+      "detection_tier": "alternative_api",
+      "expected_tier": "alternative_api",
+      "tools_detected": 5,
+      "expected_tools": 5,
+      "passed": true,
+      "execution_time_ms": 6865,
+      "tools": [
+        {
+          "id": "813a0b05-bde1-4508-bbc4-b12ec22d785b",
+          "name": "firecrawl-mcp_tool_1",
+          "description": "Mock tool 1 for firecrawl-mcp",
+          "method": "POST",
+          "endpoint": "/api/firecrawl-mcp/tool1",
+          "detection_source": "alternative_api",
+          "tool_parameters": [
+            {
+              "id": "83263a41-d995-463d-a31e-68027ddfc17e",
+              "name": "param1",
+              "type": "string",
+              "required": true,
+              "description": "First parameter"
+            },
+            {
+              "id": "49809fee-a0e8-4f17-89f9-c6ba31a0972a",
+              "name": "param2",
+              "type": "number",
+              "required": false,
+              "description": "Second parameter"
+            }
+          ]
+        },
+        {
+          "id": "8964a663-4070-4d50-8f71-e7f170802d6e",
+          "name": "firecrawl-mcp_tool_2",
+          "description": "Mock tool 2 for firecrawl-mcp",
+          "method": "GET",
+          "endpoint": "/api/firecrawl-mcp/tool2",
+          "detection_source": "alternative_api",
+          "tool_parameters": [
+            {
+              "id": "72c832d1-38b0-4e72-a4a1-825906787fdb",
+              "name": "param1",
+              "type": "string",
+              "required": true,
+              "description": "First parameter"
+            },
+            {
+              "id": "83cb20dd-4550-4e50-8cf6-1726c6f6477b",
+              "name": "param2",
+              "type": "number",
+              "required": false,
+              "description": "Second parameter"
+            }
+          ]
+        },
+        {
+          "id": "0e4e0dc6-d658-439c-a6d8-d5746348f6e4",
+          "name": "firecrawl-mcp_tool_3",
+          "description": "Mock tool 3 for firecrawl-mcp",
+          "method": "POST",
+          "endpoint": "/api/firecrawl-mcp/tool3",
+          "detection_source": "alternative_api",
+          "tool_parameters": [
+            {
+              "id": "4df0eb5f-d48b-4929-9dbd-46ebe66aa61b",
+              "name": "param1",
+              "type": "string",
+              "required": true,
+              "description": "First parameter"
+            },
+            {
+              "id": "4faee3e1-de6e-421d-9632-d5f3c5512682",
+              "name": "param2",
+              "type": "number",
+              "required": false,
+              "description": "Second parameter"
+            }
+          ]
+        },
+        {
+          "id": "d1b4667e-cb1b-42e6-b1ae-59a5892bdf13",
+          "name": "firecrawl-mcp_tool_4",
+          "description": "Mock tool 4 for firecrawl-mcp",
+          "method": "GET",
+          "endpoint": "/api/firecrawl-mcp/tool4",
+          "detection_source": "alternative_api",
+          "tool_parameters": [
+            {
+              "id": "fa35f71a-7d74-4881-ab85-2613b2c049da",
+              "name": "param1",
+              "type": "string",
+              "required": true,
+              "description": "First parameter"
+            },
+            {
+              "id": "90f5f709-b6ea-4481-beea-719d6caa66e7",
+              "name": "param2",
+              "type": "number",
+              "required": false,
+              "description": "Second parameter"
+            }
+          ]
+        },
+        {
+          "id": "ac348a39-2457-4f99-8ebd-660564f7423d",
+          "name": "firecrawl-mcp_tool_5",
+          "description": "Mock tool 5 for firecrawl-mcp",
+          "method": "POST",
+          "endpoint": "/api/firecrawl-mcp/tool5",
+          "detection_source": "alternative_api",
+          "tool_parameters": [
+            {
+              "id": "c876634e-e5d8-4403-b9e1-e931f7ca52c8",
+              "name": "param1",
+              "type": "string",
+              "required": true,
+              "description": "First parameter"
+            },
+            {
+              "id": "0011b4a6-f659-4bba-9d06-94a1f4b99d2a",
+              "name": "param2",
+              "type": "number",
+              "required": false,
+              "description": "Second parameter"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "server_name": "hubspot-mcp",
+      "detection_tier": "alternative_api",
+      "expected_tier": "alternative_api",
+      "tools_detected": 14,
+      "expected_tools": 14,
+      "passed": true,
+      "execution_time_ms": 7084,
+      "tools": [
+        {
+          "id": "e013abb1-1238-4921-b0b8-3b8d3a7d7da2",
+          "name": "hubspot-mcp_tool_1",
+          "description": "Mock tool 1 for hubspot-mcp",
+          "method": "POST",
+          "endpoint": "/api/hubspot-mcp/tool1",
+          "detection_source": "alternative_api",
+          "tool_parameters": [
+            {
+              "id": "d24098b8-138f-4dee-8229-61f76430538a",
+              "name": "param1",
+              "type": "string",
+              "required": true,
+              "description": "First parameter"
+            },
+            {
+              "id": "2f3d048a-c16b-4cd9-8ff3-73df60f47dd8",
+              "name": "param2",
+              "type": "number",
+              "required": false,
+              "description": "Second parameter"
+            }
+          ]
+        },
+        {
+          "id": "1e7b840f-75cb-44f9-9053-7c8e20579423",
+          "name": "hubspot-mcp_tool_2",
+          "description": "Mock tool 2 for hubspot-mcp",
+          "method": "GET",
+          "endpoint": "/api/hubspot-mcp/tool2",
+          "detection_source": "alternative_api",
+          "tool_parameters": [
+            {
+              "id": "da3396ac-49e6-43ca-8869-ed2c316529d2",
+              "name": "param1",
+              "type": "string",
+              "required": true,
+              "description": "First parameter"
+            },
+            {
+              "id": "7863e396-e869-4d22-a603-e944a537e6d8",
+              "name": "param2",
+              "type": "number",
+              "required": false,
+              "description": "Second parameter"
+            }
+          ]
+        },
+        {
+          "id": "d8d79ee6-c310-41e3-b332-552f37da2ce2",
+          "name": "hubspot-mcp_tool_3",
+          "description": "Mock tool 3 for hubspot-mcp",
+          "method": "POST",
+          "endpoint": "/api/hubspot-mcp/tool3",
+          "detection_source": "alternative_api",
+          "tool_parameters": [
+            {
+              "id": "b7411ccb-c445-41cd-8691-7fb8fc8a57b9",
+              "name": "param1",
+              "type": "string",
+              "required": true,
+              "description": "First parameter"
+            },
+            {
+              "id": "0e99c9c0-a2ff-4aea-b15b-2cebbcfd3f46",
+              "name": "param2",
+              "type": "number",
+              "required": false,
+              "description": "Second parameter"
+            }
+          ]
+        },
+        {
+          "id": "132982c0-8084-44c2-97a2-02c5c219fd3f",
+          "name": "hubspot-mcp_tool_4",
+          "description": "Mock tool 4 for hubspot-mcp",
+          "method": "GET",
+          "endpoint": "/api/hubspot-mcp/tool4",
+          "detection_source": "alternative_api",
+          "tool_parameters": [
+            {
+              "id": "fd58340f-29ab-4f94-b382-1fa0d04aa878",
+              "name": "param1",
+              "type": "string",
+              "required": true,
+              "description": "First parameter"
+            },
+            {
+              "id": "e4344daa-cc5f-4f31-8da9-efd642ed906f",
+              "name": "param2",
+              "type": "number",
+              "required": false,
+              "description": "Second parameter"
+            }
+          ]
+        },
+        {
+          "id": "1419b2ab-5b3c-4ebe-bdcb-9934fc8719ac",
+          "name": "hubspot-mcp_tool_5",
+          "description": "Mock tool 5 for hubspot-mcp",
+          "method": "POST",
+          "endpoint": "/api/hubspot-mcp/tool5",
+          "detection_source": "alternative_api",
+          "tool_parameters": [
+            {
+              "id": "482c8544-6aef-4a8e-acad-24d5b9c32cc4",
+              "name": "param1",
+              "type": "string",
+              "required": true,
+              "description": "First parameter"
+            },
+            {
+              "id": "246e92fc-6258-46db-91c9-081b23621a27",
+              "name": "param2",
+              "type": "number",
+              "required": false,
+              "description": "Second parameter"
+            }
+          ]
+        },
+        {
+          "id": "956c4e42-e5dd-4e1f-8035-67db4cdccd8a",
+          "name": "hubspot-mcp_tool_6",
+          "description": "Mock tool 6 for hubspot-mcp",
+          "method": "GET",
+          "endpoint": "/api/hubspot-mcp/tool6",
+          "detection_source": "alternative_api",
+          "tool_parameters": [
+            {
+              "id": "6363e400-d2a9-4835-9f64-979ba801f898",
+              "name": "param1",
+              "type": "string",
+              "required": true,
+              "description": "First parameter"
+            },
+            {
+              "id": "dee4170f-00e3-4036-be2c-8f0bfc80b818",
+              "name": "param2",
+              "type": "number",
+              "required": false,
+              "description": "Second parameter"
+            }
+          ]
+        },
+        {
+          "id": "f63870a3-ac96-48b6-b8a7-8770bfa434ca",
+          "name": "hubspot-mcp_tool_7",
+          "description": "Mock tool 7 for hubspot-mcp",
+          "method": "POST",
+          "endpoint": "/api/hubspot-mcp/tool7",
+          "detection_source": "alternative_api",
+          "tool_parameters": [
+            {
+              "id": "7b0e8c84-790d-4d91-8d47-4e854cd52198",
+              "name": "param1",
+              "type": "string",
+              "required": true,
+              "description": "First parameter"
+            },
+            {
+              "id": "82a4ef76-6833-4901-b53f-0e1715a6d2ad",
+              "name": "param2",
+              "type": "number",
+              "required": false,
+              "description": "Second parameter"
+            }
+          ]
+        },
+        {
+          "id": "8584559f-bafe-47f5-bc16-ff782ddacf5f",
+          "name": "hubspot-mcp_tool_8",
+          "description": "Mock tool 8 for hubspot-mcp",
+          "method": "GET",
+          "endpoint": "/api/hubspot-mcp/tool8",
+          "detection_source": "alternative_api",
+          "tool_parameters": [
+            {
+              "id": "8f642774-cb78-4b15-9c22-851e28f02af9",
+              "name": "param1",
+              "type": "string",
+              "required": true,
+              "description": "First parameter"
+            },
+            {
+              "id": "2233dcaf-e5b2-4378-b2b3-18f649ba4dc6",
+              "name": "param2",
+              "type": "number",
+              "required": false,
+              "description": "Second parameter"
+            }
+          ]
+        },
+        {
+          "id": "5ab86668-fa9a-4a9d-8bf2-fc4c8047b7c6",
+          "name": "hubspot-mcp_tool_9",
+          "description": "Mock tool 9 for hubspot-mcp",
+          "method": "POST",
+          "endpoint": "/api/hubspot-mcp/tool9",
+          "detection_source": "alternative_api",
+          "tool_parameters": [
+            {
+              "id": "2b3b588a-67a5-46b9-9521-2b56fab132ab",
+              "name": "param1",
+              "type": "string",
+              "required": true,
+              "description": "First parameter"
+            },
+            {
+              "id": "82add258-bb66-4d93-a56f-6beca1e5b219",
+              "name": "param2",
+              "type": "number",
+              "required": false,
+              "description": "Second parameter"
+            }
+          ]
+        },
+        {
+          "id": "50fc6dec-bfdf-4dc5-9ec4-e0cf8c7b1094",
+          "name": "hubspot-mcp_tool_10",
+          "description": "Mock tool 10 for hubspot-mcp",
+          "method": "GET",
+          "endpoint": "/api/hubspot-mcp/tool10",
+          "detection_source": "alternative_api",
+          "tool_parameters": [
+            {
+              "id": "9b590dc8-a3c9-4429-b8fc-03a59b631e01",
+              "name": "param1",
+              "type": "string",
+              "required": true,
+              "description": "First parameter"
+            },
+            {
+              "id": "42b25f33-0fa3-42b5-9719-719b512ea9ee",
+              "name": "param2",
+              "type": "number",
+              "required": false,
+              "description": "Second parameter"
+            }
+          ]
+        },
+        {
+          "id": "f5031ec0-bfab-4d9f-a783-df8e4e499387",
+          "name": "hubspot-mcp_tool_11",
+          "description": "Mock tool 11 for hubspot-mcp",
+          "method": "POST",
+          "endpoint": "/api/hubspot-mcp/tool11",
+          "detection_source": "alternative_api",
+          "tool_parameters": [
+            {
+              "id": "b5d22f70-30fc-4c06-a765-ee7f66c78a29",
+              "name": "param1",
+              "type": "string",
+              "required": true,
+              "description": "First parameter"
+            },
+            {
+              "id": "67d76dd6-3f76-4214-9f92-198b4929213a",
+              "name": "param2",
+              "type": "number",
+              "required": false,
+              "description": "Second parameter"
+            }
+          ]
+        },
+        {
+          "id": "0a00759f-b276-4b3f-ad3f-813dc095ff08",
+          "name": "hubspot-mcp_tool_12",
+          "description": "Mock tool 12 for hubspot-mcp",
+          "method": "GET",
+          "endpoint": "/api/hubspot-mcp/tool12",
+          "detection_source": "alternative_api",
+          "tool_parameters": [
+            {
+              "id": "e531ac9f-c86e-4b28-8252-c04316ae9068",
+              "name": "param1",
+              "type": "string",
+              "required": true,
+              "description": "First parameter"
+            },
+            {
+              "id": "d2dff501-79ae-414d-acad-0a6efcf6d778",
+              "name": "param2",
+              "type": "number",
+              "required": false,
+              "description": "Second parameter"
+            }
+          ]
+        },
+        {
+          "id": "c149eb04-af0e-4fd1-8eb7-d77a74756511",
+          "name": "hubspot-mcp_tool_13",
+          "description": "Mock tool 13 for hubspot-mcp",
+          "method": "POST",
+          "endpoint": "/api/hubspot-mcp/tool13",
+          "detection_source": "alternative_api",
+          "tool_parameters": [
+            {
+              "id": "126a6d41-b4b2-4e5f-806a-b1cef3be788e",
+              "name": "param1",
+              "type": "string",
+              "required": true,
+              "description": "First parameter"
+            },
+            {
+              "id": "34ebe93e-b608-4102-8999-d9748b24b913",
+              "name": "param2",
+              "type": "number",
+              "required": false,
+              "description": "Second parameter"
+            }
+          ]
+        },
+        {
+          "id": "a0f2fe5b-7fba-4ac3-8af9-aa11727052c1",
+          "name": "hubspot-mcp_tool_14",
+          "description": "Mock tool 14 for hubspot-mcp",
+          "method": "GET",
+          "endpoint": "/api/hubspot-mcp/tool14",
+          "detection_source": "alternative_api",
+          "tool_parameters": [
+            {
+              "id": "c1f8eb01-393e-4e05-ad10-b1ea03e7f181",
+              "name": "param1",
+              "type": "string",
+              "required": true,
+              "description": "First parameter"
+            },
+            {
+              "id": "ff3318e3-0ba3-4aff-87bf-bc77d924d9ae",
+              "name": "param2",
+              "type": "number",
+              "required": false,
+              "description": "Second parameter"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "server_name": "gitmcp",
+      "detection_tier": "github_repository",
+      "expected_tier": "github_repository",
+      "tools_detected": 3,
+      "expected_tools": 3,
+      "passed": true,
+      "execution_time_ms": 11153,
+      "tools": [
+        {
+          "id": "3ee8f2e7-2e1c-45bd-ae82-15ab2145c880",
+          "name": "gitmcp_tool_1",
+          "description": "Mock tool 1 for gitmcp",
+          "method": "POST",
+          "endpoint": "/api/gitmcp/tool1",
+          "detection_source": "github_repository",
+          "tool_parameters": [
+            {
+              "id": "149c0e01-6bab-4e53-bbb2-1ead2a816006",
+              "name": "param1",
+              "type": "string",
+              "required": true,
+              "description": "First parameter"
+            },
+            {
+              "id": "77679609-70fb-4c35-9e7f-62c611bf32ff",
+              "name": "param2",
+              "type": "number",
+              "required": false,
+              "description": "Second parameter"
+            }
+          ]
+        },
+        {
+          "id": "002ddee8-0250-40e2-93eb-21fd2950fc7e",
+          "name": "gitmcp_tool_2",
+          "description": "Mock tool 2 for gitmcp",
+          "method": "GET",
+          "endpoint": "/api/gitmcp/tool2",
+          "detection_source": "github_repository",
+          "tool_parameters": [
+            {
+              "id": "7a56d862-a5dd-4f6d-95fc-2683d2d08106",
+              "name": "param1",
+              "type": "string",
+              "required": true,
+              "description": "First parameter"
+            },
+            {
+              "id": "844c9a99-de47-4d0c-9582-f9ee968fb096",
+              "name": "param2",
+              "type": "number",
+              "required": false,
+              "description": "Second parameter"
+            }
+          ]
+        },
+        {
+          "id": "75dcc3fa-b9b5-48eb-8d15-90d4fcd8efae",
+          "name": "gitmcp_tool_3",
+          "description": "Mock tool 3 for gitmcp",
+          "method": "POST",
+          "endpoint": "/api/gitmcp/tool3",
+          "detection_source": "github_repository",
+          "tool_parameters": [
+            {
+              "id": "e9abbd99-9394-4413-bb50-19e79d0f9ef1",
+              "name": "param1",
+              "type": "string",
+              "required": true,
+              "description": "First parameter"
+            },
+            {
+              "id": "a5fd9f0e-52fe-4f01-ae0b-3614a8db904b",
+              "name": "param2",
+              "type": "number",
+              "required": false,
+              "description": "Second parameter"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "server_name": "netlify-mcp",
+      "detection_tier": "github_repository",
+      "expected_tier": "github_repository",
+      "tools_detected": 4,
+      "expected_tools": 4,
+      "passed": true,
+      "execution_time_ms": 11549,
+      "tools": [
+        {
+          "id": "afe3bfb4-6aa4-4c06-830a-6c7c10b7abf4",
+          "name": "netlify-mcp_tool_1",
+          "description": "Mock tool 1 for netlify-mcp",
+          "method": "POST",
+          "endpoint": "/api/netlify-mcp/tool1",
+          "detection_source": "github_repository",
+          "tool_parameters": [
+            {
+              "id": "c7344894-ee57-4f7a-b786-9e1c082f0897",
+              "name": "param1",
+              "type": "string",
+              "required": true,
+              "description": "First parameter"
+            },
+            {
+              "id": "bcaac519-9385-4b2c-8f5d-ab7bc0880f94",
+              "name": "param2",
+              "type": "number",
+              "required": false,
+              "description": "Second parameter"
+            }
+          ]
+        },
+        {
+          "id": "0914ac0b-06dc-45aa-9f19-3223b6aa3cfc",
+          "name": "netlify-mcp_tool_2",
+          "description": "Mock tool 2 for netlify-mcp",
+          "method": "GET",
+          "endpoint": "/api/netlify-mcp/tool2",
+          "detection_source": "github_repository",
+          "tool_parameters": [
+            {
+              "id": "fdfc18df-7dd8-40f8-be58-97b7b088065b",
+              "name": "param1",
+              "type": "string",
+              "required": true,
+              "description": "First parameter"
+            },
+            {
+              "id": "6f08a529-214f-4d27-b0a7-0d64333bd1f6",
+              "name": "param2",
+              "type": "number",
+              "required": false,
+              "description": "Second parameter"
+            }
+          ]
+        },
+        {
+          "id": "25f8afb8-0852-4482-8ce9-57ebefb0607e",
+          "name": "netlify-mcp_tool_3",
+          "description": "Mock tool 3 for netlify-mcp",
+          "method": "POST",
+          "endpoint": "/api/netlify-mcp/tool3",
+          "detection_source": "github_repository",
+          "tool_parameters": [
+            {
+              "id": "bb0bb365-32bf-4666-8550-d243a6ab30ae",
+              "name": "param1",
+              "type": "string",
+              "required": true,
+              "description": "First parameter"
+            },
+            {
+              "id": "f6abd5b7-52fc-470c-b15c-7de294fb958a",
+              "name": "param2",
+              "type": "number",
+              "required": false,
+              "description": "Second parameter"
+            }
+          ]
+        },
+        {
+          "id": "4eb6f6aa-caa5-4f4a-aaa4-fdf1a544584a",
+          "name": "netlify-mcp_tool_4",
+          "description": "Mock tool 4 for netlify-mcp",
+          "method": "GET",
+          "endpoint": "/api/netlify-mcp/tool4",
+          "detection_source": "github_repository",
+          "tool_parameters": [
+            {
+              "id": "deaff56d-e295-49f1-8c6a-a9db2c04f6c3",
+              "name": "param1",
+              "type": "string",
+              "required": true,
+              "description": "First parameter"
+            },
+            {
+              "id": "1179ffa3-858c-4e93-855d-7f9937b7c5ee",
+              "name": "param2",
+              "type": "number",
+              "required": false,
+              "description": "Second parameter"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "server_name": "pulsemcp",
+      "detection_tier": "github_repository",
+      "expected_tier": "github_repository",
+      "tools_detected": 2,
+      "expected_tools": 2,
+      "passed": true,
+      "execution_time_ms": 10805,
+      "tools": [
+        {
+          "id": "497b4a83-d32c-470c-94a6-c50c600f0114",
+          "name": "pulsemcp_tool_1",
+          "description": "Mock tool 1 for pulsemcp",
+          "method": "POST",
+          "endpoint": "/api/pulsemcp/tool1",
+          "detection_source": "github_repository",
+          "tool_parameters": [
+            {
+              "id": "8935c381-ad86-46e7-90a7-24bb480672b4",
+              "name": "param1",
+              "type": "string",
+              "required": true,
+              "description": "First parameter"
+            },
+            {
+              "id": "63abab5d-51d2-45cc-917a-b97639936bd5",
+              "name": "param2",
+              "type": "number",
+              "required": false,
+              "description": "Second parameter"
+            }
+          ]
+        },
+        {
+          "id": "57ba7f64-160b-44be-ac1b-c0c6dcd02129",
+          "name": "pulsemcp_tool_2",
+          "description": "Mock tool 2 for pulsemcp",
+          "method": "GET",
+          "endpoint": "/api/pulsemcp/tool2",
+          "detection_source": "github_repository",
+          "tool_parameters": [
+            {
+              "id": "492557ee-2cc9-47f8-9a3e-b1a64be7240c",
+              "name": "param1",
+              "type": "string",
+              "required": true,
+              "description": "First parameter"
+            },
+            {
+              "id": "a28198d8-3dcc-4f88-886e-37e3b32d725a",
+              "name": "param2",
+              "type": "number",
+              "required": false,
+              "description": "Second parameter"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "server_name": "brave-search",
+      "detection_tier": "github_repository",
+      "expected_tier": "github_repository",
+      "tools_detected": 3,
+      "expected_tools": 3,
+      "passed": true,
+      "execution_time_ms": 11053,
+      "tools": [
+        {
+          "id": "0aee98cc-97d0-414b-860d-349917d4d56b",
+          "name": "brave-search_tool_1",
+          "description": "Mock tool 1 for brave-search",
+          "method": "POST",
+          "endpoint": "/api/brave-search/tool1",
+          "detection_source": "github_repository",
+          "tool_parameters": [
+            {
+              "id": "966f2432-1272-4185-9e5a-6d027a711660",
+              "name": "param1",
+              "type": "string",
+              "required": true,
+              "description": "First parameter"
+            },
+            {
+              "id": "3ab5be6d-c5c0-4289-ae26-b18effd78d8e",
+              "name": "param2",
+              "type": "number",
+              "required": false,
+              "description": "Second parameter"
+            }
+          ]
+        },
+        {
+          "id": "ef945528-54ed-419f-80ea-f4f07b49792b",
+          "name": "brave-search_tool_2",
+          "description": "Mock tool 2 for brave-search",
+          "method": "GET",
+          "endpoint": "/api/brave-search/tool2",
+          "detection_source": "github_repository",
+          "tool_parameters": [
+            {
+              "id": "78233a5e-72d3-4f1c-ac7d-837cb280c402",
+              "name": "param1",
+              "type": "string",
+              "required": true,
+              "description": "First parameter"
+            },
+            {
+              "id": "d477313f-4666-4f78-b7bb-6f4802e7a3b4",
+              "name": "param2",
+              "type": "number",
+              "required": false,
+              "description": "Second parameter"
+            }
+          ]
+        },
+        {
+          "id": "a8133a1e-5c59-45ba-ac5b-9d5418ee45b8",
+          "name": "brave-search_tool_3",
+          "description": "Mock tool 3 for brave-search",
+          "method": "POST",
+          "endpoint": "/api/brave-search/tool3",
+          "detection_source": "github_repository",
+          "tool_parameters": [
+            {
+              "id": "7252b187-0eeb-453c-acc0-b85c46b3e69a",
+              "name": "param1",
+              "type": "string",
+              "required": true,
+              "description": "First parameter"
+            },
+            {
+              "id": "ec7eba07-94a7-4896-b01d-1b6014d6dfaa",
+              "name": "param2",
+              "type": "number",
+              "required": false,
+              "description": "Second parameter"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "total": 9,
+    "passed": 9,
+    "failed": 0
+  },
+  "duration_ms": 79291,
+  "tier_results": {
+    "standard_mcp_api": {
+      "total": 3,
+      "passed": 3,
+      "failed": 0
+    },
+    "alternative_api": {
+      "total": 2,
+      "passed": 2,
+      "failed": 0
+    },
+    "github_repository": {
+      "total": 4,
+      "passed": 4,
+      "failed": 0
+    }
+  }
+}

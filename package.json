@@ -1,9 +1,23 @@
 {
+  "type": "module",
+  "scripts": {
+    "test:tools": "ts-node --esm scripts/test-tools-detection.ts",
+    "test:tools:real": "ts-node --esm scripts/test-tools-detection-real.ts",
+    "test:tools:simulated": "ts-node --esm scripts/test-tools-detection-simulated.ts",
+    "test:github-detection": "ts-node --esm scripts/test-github-detection.ts",
+    "test:setup-env": "ts-node --esm scripts/create-test-env.ts",
+    "update:server-tools": "ts-node --esm scripts/update-all-server-tools.ts"
+  },
   "devDependencies": {
+    "@supabase/supabase-js": "^2.38.5",
+    "@types/node-fetch": "^2.6.12",
     "chalk": "^4.1.2",
     "cli-progress": "^3.12.0",
     "commander": "^14.0.0",
+    "dotenv": "^16.3.1",
     "node-fetch": "^2.7.0",
-    "ora": "^8.2.0"
+    "ora": "^8.2.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.2.2"
   }
 }

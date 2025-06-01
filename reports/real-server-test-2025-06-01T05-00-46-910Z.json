@@ -1,0 +1,118 @@
+{
+  "timestamp": "2025-06-01T05:00:46.909Z",
+  "results": [
+    {
+      "server_name": "puppeteer-mcp",
+      "detection_tier": "none",
+      "expected_tier": "standard_mcp_api",
+      "tools_detected": 0,
+      "expected_tools": 7,
+      "passed": false,
+      "execution_time_ms": 6779,
+      "tools": []
+    },
+    {
+      "server_name": "supabase-mcp-server",
+      "detection_tier": "none",
+      "expected_tier": "standard_mcp_api",
+      "tools_detected": 0,
+      "expected_tools": 10,
+      "passed": false,
+      "execution_time_ms": 5661,
+      "tools": []
+    },
+    {
+      "server_name": "linear-mcp",
+      "detection_tier": "none",
+      "expected_tier": "standard_mcp_api",
+      "tools_detected": 0,
+      "expected_tools": 12,
+      "passed": false,
+      "execution_time_ms": 5581,
+      "tools": []
+    },
+    {
+      "server_name": "firecrawl-mcp",
+      "detection_tier": "none",
+      "expected_tier": "alternative_api",
+      "tools_detected": 0,
+      "expected_tools": 5,
+      "passed": false,
+      "execution_time_ms": 5641,
+      "tools": []
+    },
+    {
+      "server_name": "hubspot-mcp",
+      "detection_tier": "none",
+      "expected_tier": "alternative_api",
+      "tools_detected": 0,
+      "expected_tools": 14,
+      "passed": false,
+      "execution_time_ms": 5544,
+      "tools": []
+    },
+    {
+      "server_name": "gitmcp",
+      "detection_tier": "none",
+      "expected_tier": "github_repository",
+      "tools_detected": 0,
+      "expected_tools": 3,
+      "passed": false,
+      "execution_time_ms": 12061,
+      "tools": []
+    },
+    {
+      "server_name": "netlify-mcp",
+      "detection_tier": "none",
+      "expected_tier": "github_repository",
+      "tools_detected": 0,
+      "expected_tools": 4,
+      "passed": false,
+      "execution_time_ms": 13345,
+      "tools": []
+    },
+    {
+      "server_name": "pulsemcp",
+      "detection_tier": "none",
+      "expected_tier": "github_repository",
+      "tools_detected": 0,
+      "expected_tools": 2,
+      "passed": false,
+      "execution_time_ms": 11966,
+      "tools": []
+    },
+    {
+      "server_name": "brave-search",
+      "detection_tier": "none",
+      "expected_tier": "github_repository",
+      "tools_detected": 0,
+      "expected_tools": 3,
+      "passed": false,
+      "execution_time_ms": 13257,
+      "tools": []
+    }
+  ],
+  "summary": {
+    "total": 9,
+    "passed": 0,
+    "failed": 9
+  },
+  "duration_ms": 79835,
+  "tier_results": {
+    "standard_mcp_api": {
+      "total": 3,
+      "passed": 0,
+      "failed": 3
+    },
+    "alternative_api": {
+      "total": 2,
+      "passed": 0,
+      "failed": 2
+    },
+    "github_repository": {
+      "total": 4,
+      "passed": 0,
+      "failed": 4
+    }
+  }
+}

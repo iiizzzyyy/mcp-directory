@@ -1,0 +1,9 @@
+[
+  {
+    "serverId": "e443e54c-0f4b-4151-a4a2-fed641bafb9c",
+    "name": "Supabase MCP",
+    "githubUrl": "https://github.com/supabase/supabase-mcp",
+    "success": false,
+    "error": "Command failed: ts-node /Users/izzy.aly/Documents/mcp-directory-final/scripts/github-tools-detector.ts e443e54c-0f4b-4151-a4a2-fed641bafb9c\n/Users/izzy.aly/Documents/mcp-directory-final/node_modules/ts-node/src/index.ts:859\n    return new TSError(diagnosticText, diagnosticCodes, diagnostics);\n           ^\nTSError: ⨯ Unable to compile TypeScript:\nscripts/github-tools-detector.ts(678,40): error TS7006: Parameter 'tag' implicitly has an 'any' type.\n\n    at createTSError (/Users/izzy.aly/Documents/mcp-directory-final/node_modules/ts-node/src/index.ts:859:12)\n    at reportTSError (/Users/izzy.aly/Documents/mcp-directory-final/node_modules/ts-node/src/index.ts:863:19)\n    at getOutput (/Users/izzy.aly/Documents/mcp-directory-final/node_modules/ts-node/src/index.ts:1077:36)\n    at Object.compile (/Users/izzy.aly/Documents/mcp-directory-final/node_modules/ts-node/src/index.ts:1433:41)\n    at Module.m._compile (/Users/izzy.aly/Documents/mcp-directory-final/node_modules/ts-node/src/index.ts:1617:30)\n    at loadTS (node:internal/modules/cjs/loader:1815:10)\n    at Object.require.extensions.<computed> [as .ts] (/Users/izzy.aly/Documents/mcp-directory-final/node_modules/ts-node/src/index.ts:1621:12)\n    at Module.load (node:internal/modules/cjs/loader:1458:32)\n    at Function._load (node:internal/modules/cjs/loader:1275:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:322:14) {\n  diagnosticCodes: [ 7006 ]\n}\n"
+  }
+]

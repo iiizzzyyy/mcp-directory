@@ -1,41 +1,66 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { AlertCircle } from 'lucide-react';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
 import CompatibilityMatrix from './CompatibilityMatrix';
 import { CompatibilityItem } from './CompatibilityMatrix';
+import { useFetch } from '@/hooks/useFetch';
 
 interface CompatibilityMatrixWrapperProps {
   serverId: string;
 }
 
-export default function CompatibilityMatrixWrapper({ serverId }: CompatibilityMatrixWrapperProps) {
-  const [compatibilityData, setCompatibilityData] = useState<CompatibilityItem[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  
-  useEffect(() => {
-    // In a real implementation, this would fetch compatibility data for the server
-    // For now, we'll use mock data
-    const mockCompatibilityData: CompatibilityItem[] = [
-      { platform: 'Windows', status: 'compatible', version: '10+' },
-      { platform: 'macOS', status: 'compatible', version: '12+' },
-      { platform: 'Linux', status: 'compatible', version: 'Ubuntu 20.04+' },
-      { platform: 'Docker', status: 'compatible' },
-      { platform: 'Node.js', status: 'partial', notes: 'Requires v18+' },
-      { platform: 'Python', status: 'compatible', version: '3.8+' },
-    ];
-    
-    setCompatibilityData(mockCompatibilityData);
-    setIsLoading(false);
-  }, [serverId]);
+// Define TypeScript interface for API response
+interface CompatibilityResponse {
+  compatibility: CompatibilityItem[];
+}
 
-  if (isLoading) {
+export default function CompatibilityMatrixWrapper({ serverId }: CompatibilityMatrixWrapperProps) {
+  // Use our custom hook to fetch compatibility data
+  const { data, error, loading, refetch } = useFetch<CompatibilityResponse>(
+    `/api/servers/${serverId}/compatibility`
+  );
+  
+  // If there's an error, show an error message with retry button
+  if (error) {
     return (
-      <div className="animate-pulse space-y-2">
-        <div className="h-4 bg-gray-200 rounded w-1/4"></div>
-        <div className="h-20 bg-gray-200 rounded w-full"></div>
+      <Alert variant="destructive">
+        <AlertCircle className="h-4 w-4" />
+        <AlertTitle>Error</AlertTitle>
+        <AlertDescription>
+          Failed to load compatibility data: {error.message}
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={() => refetch()} 
+            className="mt-2 ml-2"
+          >
+            Retry
+          </Button>
+        </AlertDescription>
+      </Alert>
+    );
+  }
+
+  // Show skeleton UI while loading
+  if (loading) {
+    return (
+      <div className="space-y-2">
+        <Skeleton className="h-4 w-1/4" />
+        <Skeleton className="h-[120px] w-full" />
+        <Skeleton className="h-4 w-3/4" />
+        <Skeleton className="h-4 w-2/3" />
       </div>
     );
   }
 
-  return <CompatibilityMatrix compatibility={compatibilityData} />;
+  // If no data or empty compatibility, use empty array
+  if (!data || !data.compatibility) {
+    return <CompatibilityMatrix compatibility={[]} />;
+  }
+
+  // Return the compatibility matrix with the fetched data
+  return <CompatibilityMatrix compatibility={data.compatibility} />;
 }

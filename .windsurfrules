@@ -108,62 +108,90 @@
   "message": "Missing server ID",
   "code": 400
 }
-	•	Use HTTP status codes:
-	•	200 OK
-	•	400 Bad Request
-	•	404 Not Found
+```
+- Use HTTP status codes:
+	•	200 OK  
+	•	400 Bad Request  
+	•	404 Not Found  
 	•	500 Internal Error
 
+---
 
-⸻
+## ✅ Deployment & Build Rules
+- Frontend is deployed to Netlify from /frontend/dist
+- Use netlify.toml to define build and function routes
+- Edge functions bundled using Supabase MCP
+- Supabase keys and GitHub tokens stored securely in Netlify env vars
 
-✅ Deployment & Build Rules
-	•	Frontend is deployed to Netlify from /frontend/dist
-	•	Use netlify.toml to define build and function routes
-	•	Edge functions bundled using Supabase MCP
-	•	Supabase keys and GitHub tokens stored securely in Netlify env vars
+---
 
-⸻
+## 🧪 Testing Requirements
+- Every page/component must include:
+	•	Loading state  
+	•	Empty state  
+	•	Error state  
+- Edge functions must:
+	•	Be testable via Postman or CLI script  
+	•	Return mock-friendly outputs  
 
-🧪 Testing Requirements
-	•	Every page/component must include:
-	•	Loading state
-	•	Empty state
-	•	Error state
-	•	Edge functions must:
-	•	Be testable via Postman or CLI script
-	•	Return mock-friendly outputs
+---
 
-⸻
+## 🌍 Internationalization
+- Use English as default UI language
+- Plan for i18n-ready components with message keys
+- Add language field to server records when relevant
 
-🌍 Internationalization
-	•	Use English as default UI language
-	•	Plan for i18n-ready components with message keys
-	•	Add language field to server records when relevant
+---
 
-⸻
+## 🧠 AI Agents (Optional)
+- MCP-aware LLMs like Claude/DeepSeek may be added for:
+	•	Install walkthroughs  
+	•	Health diagnostics  
+	•	Compatibility checks  
 
-🧠 AI Agents (Optional)
-	•	MCP-aware LLMs like Claude/DeepSeek may be added for:
-	•	Install walkthroughs
-	•	Health diagnostics
-	•	Compatibility checks
+---
 
-⸻
+## 🧾 Issue Resolution Workflow
 
-✅ Always Do
-	•	Break large features into smaller prompts
-	•	Use code comments in all functions
-	•	Define types/interfaces in a separate types/ folder
-	•	Link prompts to actual output files clearly
+1. **Review First**:  
+   - Before implementing any fix, always carefully review all **code** and **log files**.  
+   - Think through the problem step by step.
 
-🚫 Never Do
-	•	Mix inline type definitions
-	•	Hardcode server IDs or URLs
-	•	Block anonymous reads on public endpoints
-	•	Rely on client-side only for install command logic
+2. **Check Linear MCP**:  
+   - Open Linear and **search for existing tasks** related to the issue.  
+   - If no task exists, **create a new one** with a clear and descriptive title.
 
-⸻
+3. **Document the Issue**:  
+   - In the Linear task, document:
+     - A detailed description of the issue  
+     - Relevant logs or code snippets  
+     - Your **step-by-step plan** to resolve the issue
+
+4. **Implement & Test**:  
+   - Execute the fix and run all relevant tests (Postman, CLI, browser).  
+   - Ensure the fix passes and covers loading, empty, and error states where applicable.
+
+5. **Close the Loop**:  
+   - Once testing is complete, update the Linear task:  
+     - Set status to `"Complete"` or `"Done"`  
+     - Add a summary of what was implemented and how it resolved the issue
+
+---
+
+## ✅ Always Do
+- Break large features into smaller prompts
+- Use code comments in all functions
+- Define types/interfaces in a separate types/ folder
+- Link prompts to actual output files clearly
+
+## 🚫 Never Do
+- Mix inline type definitions
+- Hardcode server IDs or URLs
+- Block anonymous reads on public endpoints
+- Rely on client-side only for install command logic
+
+---
+
 - Do not give me code unless I explicitly ask for it.
 - Guide me in problem-solving instead of providing direct answers.
 - When I ask about programming concepts (e.g., "What is a hook?"), give me a direct and clear explanation.
@@ -174,9 +202,50 @@
 - Encourage modular thinking—breaking problems into reusable components.
 - Remind me to reflect on what I learned after solving an issue.
 - If I explicitly ask for code (e.g., "Give me the code"), then you can provide it.
-
 - Encourage me to read and understand error messages instead of just fixing the issue for me.
 - Help me identify patterns in my mistakes so I can improve my debugging skills.
 - Suggest different approaches instead of leading me to one specific solution.
 - Guide me toward using console.log(), browser dev tools, and other debugging techniques.
-- Help me understand how to search effectively (e.g., Googling error messages or checking documentation
+- Help me understand how to search effectively (e.g., Googling error messages or checking documentation)
+
+🎯 **Goal**  
+Implement a fix for the identified issue and verify it's resolved.
+
+🧠 **Task Breakdown**
+1. Apply the fix in the correct layer (DB, edge function, or UI).
+2. Write unit/integration tests if applicable.
+3. Validate it via CLI or Postman (for edge functions) or browser for UI.
+
+✅ **Deliverables**
+- Committed code with comments
+- Updated test coverage
+- Confirmation that issue is no longer reproducible
+
+🎯 **Goal**  
+Ensure every technical issue is documented and tracked before implementation.
+
+🧠 **Task Breakdown**
+1. Review the logs and source code to understand the issue.
+2. Open Linear MCP and search for existing tasks.
+3. If not found, create a new task and document:
+   - Logs, screenshots, error codes
+   - The suspected cause
+   - Your hypothesis for resolving it
+
+✅ **Deliverables**
+- Linear task with a complete description
+- Initial root cause analysis
+
+🎯 **Goal**  
+Close the loop in Linear MCP once the fix has been tested.
+
+🧠 **Task Breakdown**
+1. Update the task status to "Complete" or "Done"
+2. Add a comment with:
+   - What was implemented
+   - How it was tested
+   - Any side effects or dependencies updated
+
+✅ **Deliverables**
+- Task marked done
+- Final implementation summary added to Linear

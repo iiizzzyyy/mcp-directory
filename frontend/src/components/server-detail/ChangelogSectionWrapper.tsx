@@ -1,21 +1,52 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { AlertCircle } from 'lucide-react';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
 import ChangelogSection from './ChangelogSection';
 import { ChangelogEntry } from './ChangelogSection';
+import { useFetch } from '@/hooks/useFetch';
 
 interface ChangelogSectionWrapperProps {
   serverId: string;
 }
 
+// Define TypeScript interface for API response
+interface ChangelogResponse {
+  changelog: ChangelogEntry[];
+}
+
 export default function ChangelogSectionWrapper({ serverId }: ChangelogSectionWrapperProps) {
-  const [changelogData, setChangelogData] = useState<ChangelogEntry[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  // Use our custom hook to fetch changelog data
+  const { data, error, loading, refetch } = useFetch<ChangelogResponse>(
+    `/api/servers/${serverId}/changelog`
+  );
   
-  useEffect(() => {
-    // In a real implementation, this would fetch changelog data for the server
-    // For now, we'll use mock data
-    const mockChangelogData: ChangelogEntry[] = [
+  // If there's an error, show an error message with retry button
+  if (error) {
+    return (
+      <Alert variant="destructive">
+        <AlertCircle className="h-4 w-4" />
+        <AlertTitle>Error</AlertTitle>
+        <AlertDescription>
+          Failed to load changelog data: {error.message}
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={() => refetch()} 
+            className="mt-2 ml-2"
+          >
+            Retry
+          </Button>
+        </AlertDescription>
+      </Alert>
+    );
+  }
+
+  // For demonstration purposes, if the response is missing or we're still waiting for real API,
+  // we'll use mock data to show how the component should look
+  const mockChangelogData: ChangelogEntry[] = [
       {
         version: '1.2.0',
         date: '2025-05-15',
@@ -45,18 +76,24 @@ export default function ChangelogSectionWrapper({ serverId }: ChangelogSectionWr
       }
     ];
     
-    setChangelogData(mockChangelogData);
-    setIsLoading(false);
-  }, [serverId]);
-
-  if (isLoading) {
+  // Show skeleton UI while loading
+  if (loading) {
     return (
-      <div className="animate-pulse space-y-2">
-        <div className="h-4 bg-gray-200 rounded w-1/4"></div>
-        <div className="h-20 bg-gray-200 rounded w-full"></div>
+      <div className="space-y-2">
+        <Skeleton className="h-4 w-1/4" />
+        <Skeleton className="h-20 w-full" />
+        <Skeleton className="h-4 w-3/4" />
+        <Skeleton className="h-4 w-1/2" />
       </div>
     );
   }
 
-  return <ChangelogSection changelog={changelogData} />;
+  // If no data or empty changelog, use the mock data as fallback
+  // In a production environment, you would handle this differently
+  if (!data || !data.changelog) {
+    return <ChangelogSection changelog={mockChangelogData} />;
+  }
+
+  // Return the changelog with the fetched data
+  return <ChangelogSection changelog={data.changelog} />;
 }

@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 import { Inter, Open_Sans } from 'next/font/google'
 import { AuthProvider } from '@/contexts/AuthProvider'
 import LayoutShell from '@/components/layout/LayoutShell'
+import { Toaster } from '@/components/ui/toaster'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -23,6 +24,7 @@ export default function RootLayout({
           <LayoutShell>
             {children}
           </LayoutShell>
+          <Toaster />
         </AuthProvider>
       </body>
     </html>

@@ -1,39 +1,70 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { AlertCircle } from 'lucide-react';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
 import HealthChart from './HealthChart';
+import { useFetch } from '@/hooks/useFetch';
 
 interface HealthChartWrapperProps {
   serverId: string;
 }
 
-export default function HealthChartWrapper({ serverId }: HealthChartWrapperProps) {
-  const [healthHistory, setHealthHistory] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  
-  useEffect(() => {
-    // In a real implementation, this would fetch health history data for the server
-    // For now, we'll use mock data
-    const mockHealthHistory = [
-      { status: 'online', last_check_time: new Date(Date.now() - 86400000).toISOString(), response_time_ms: 120 },
-      { status: 'online', last_check_time: new Date(Date.now() - 172800000).toISOString(), response_time_ms: 115 },
-      { status: 'degraded', last_check_time: new Date(Date.now() - 259200000).toISOString(), response_time_ms: 350 },
-      { status: 'online', last_check_time: new Date(Date.now() - 345600000).toISOString(), response_time_ms: 130 },
-      { status: 'online', last_check_time: new Date(Date.now() - 432000000).toISOString(), response_time_ms: 125 },
-    ];
-    
-    setHealthHistory(mockHealthHistory);
-    setIsLoading(false);
-  }, [serverId]);
+// Define TypeScript interfaces for API response
+interface HealthEntry {
+  status: 'online' | 'degraded' | 'offline' | 'maintenance';
+  last_check_time: string;
+  response_time_ms?: number;
+  error_message?: string;
+}
 
-  if (isLoading) {
+interface HealthHistoryResponse {
+  health_history: HealthEntry[];
+}
+
+export default function HealthChartWrapper({ serverId }: HealthChartWrapperProps) {
+  // Use our custom hook to fetch health data
+  const { data, error, loading, refetch } = useFetch<HealthHistoryResponse>(
+    `/api/servers/${serverId}/health`
+  );
+  
+  // If there's an error, show an error message with retry button
+  if (error) {
     return (
-      <div className="animate-pulse space-y-2">
-        <div className="h-4 bg-gray-200 rounded w-1/4"></div>
-        <div className="h-20 bg-gray-200 rounded w-full"></div>
+      <Alert variant="destructive">
+        <AlertCircle className="h-4 w-4" />
+        <AlertTitle>Error</AlertTitle>
+        <AlertDescription>
+          Failed to load health data: {error.message}
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={() => refetch()} 
+            className="mt-2 ml-2"
+          >
+            Retry
+          </Button>
+        </AlertDescription>
+      </Alert>
+    );
+  }
+
+  // Show skeleton UI while loading
+  if (loading) {
+    return (
+      <div className="space-y-2">
+        <Skeleton className="h-4 w-1/4" />
+        <Skeleton className="h-20 w-full" />
       </div>
     );
   }
 
-  return <HealthChart healthHistory={healthHistory} />;
+  // If no data or empty health history, use fallback
+  if (!data || !data.health_history || data.health_history.length === 0) {
+    return <HealthChart healthHistory={[]} />;
+  }
+
+  // Return the chart with the fetched data
+  return <HealthChart healthHistory={data.health_history} />;
 }

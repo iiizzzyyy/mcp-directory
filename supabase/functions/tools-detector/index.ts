@@ -4,18 +4,148 @@ import { corsHeaders } from '../_shared/cors.ts';
 
 // Initialize Supabase client
 const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
-const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
-const supabase = createClient(supabaseUrl, supabaseServiceKey);
+const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
+const supabase = createClient(supabaseUrl, supabaseKey);
 
-// GitHub API token for authenticated requests
-const githubToken = Deno.env.get('GITHUB_TOKEN') ?? '';
+// GitHub token for repository access
+const githubToken = Deno.env.get('GITHUB_TOKEN');
+
+// Flag to track GitHub token validity
+let isGithubTokenValid = false;
+
+// Regex patterns to detect tool definitions in JS/TS files
+const TOOL_REGEX_PATTERNS = [
+  // MCP tool definition object pattern
+  /\{\s*name\s*:\s*['"]([^'"]+)['"]\s*,\s*description\s*:\s*['"]([^'"]+)['"].*\}/gs,
+  // Function schema definition pattern
+  /\{\s*"?name"?\s*:\s*['"]([^'"]+)['"]\s*,\s*"?description"?\s*:\s*['"]([^'"]+)['"].*\}/gs,
+  // OpenAI function definition pattern
+  /functions\.push\(\s*\{\s*name\s*:\s*['"]([^'"]+)['"]\s*,\s*description\s*:\s*['"]([^'"]+)['"].*\}\)/gs
+];
+
+/**
+ * Fetch with retry, timeout, and exponential backoff
+ * 
+ * @param url URL to fetch
+ * @param options Fetch options
+ * @param retries Maximum number of retries
+ * @param timeout Timeout in milliseconds
+ * @param initialBackoff Initial backoff in milliseconds
+ * @returns Fetch response
+ */
+async function fetchWithRetry(
+  url: string, 
+  options: RequestInit = {}, 
+  retries = 3,
+  timeout = 10000,
+  initialBackoff = 1000
+): Promise<Response> {
+  let lastError: Error | null = null;
+  let currentBackoff = initialBackoff;
+  
+  // Add AbortController for timeout
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeout);
+  
+  // Combine provided options with signal
+  const fetchOptions = {
+    ...options,
+    signal: controller.signal
+  };
+  
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    try {
+      const response = await fetch(url, fetchOptions);
+      
+      // Clear timeout if request completes
+      clearTimeout(timeoutId);
+      
+      // Return successful responses
+      if (response.ok) {
+        return response;
+      }
+      
+      // For rate limiting (429) or server errors (5xx), retry with backoff
+      if (response.status === 429 || response.status >= 500) {
+        lastError = new Error(`HTTP error ${response.status}: ${response.statusText}`);
+        console.warn(`Attempt ${attempt + 1}/${retries + 1} failed: ${lastError.message}. Retrying in ${currentBackoff}ms...`);
+      } else {
+        // Don't retry for client errors (4xx) except rate limiting
+        clearTimeout(timeoutId);
+        return response;
+      }
+    } catch (error: any) {
+      // Clear timeout
+      clearTimeout(timeoutId);
+      
+      // Handle timeout errors
+      if (error.name === 'AbortError') {
+        lastError = new Error(`Request timed out after ${timeout}ms`);
+      } else {
+        lastError = error;
+      }
+      
+      console.warn(`Attempt ${attempt + 1}/${retries + 1} failed: ${lastError.message}. Retrying in ${currentBackoff}ms...`);
+    }
+    
+    // Return on last attempt
+    if (attempt === retries) {
+      break;
+    }
+    
+    // Wait with exponential backoff before retrying
+    await new Promise(resolve => setTimeout(resolve, currentBackoff));
+    
+    // Increase backoff for next attempt (exponential backoff with jitter)
+    currentBackoff = currentBackoff * 2 * (0.9 + Math.random() * 0.2);
+  }
+  
+  // Ensure we always throw a valid Error object
+  throw lastError instanceof Error ? lastError : new Error(`Failed after ${retries} retries`);
+}
+
+// Validate GitHub token on startup
+async function validateGithubToken() {
+  if (!githubToken) {
+    console.warn('No GitHub token found in environment variables. GitHub repository detection will be limited.');
+    return false;
+  }
+  
+  try {
+    const response = await fetchWithRetry('https://api.github.com/user', {
+      headers: {
+        'Authorization': `token ${githubToken}`,
+        'Accept': 'application/vnd.github.v3+json'
+      }
+    }, 2, 5000);
+    
+    if (response.ok) {
+      const data = await response.json();
+      console.log(`GitHub token validated. Authenticated as ${data.login}`);
+      return true;
+    } else {
+      const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
+      console.error(`GitHub token validation failed: ${response.status} ${errorData.message}`);
+      return false;
+    }
+  } catch (error) {
+    console.error(`GitHub token validation error:`, error);
+    return false;
+  }
+}
+
+// Validate the GitHub token on startup
+validateGithubToken().then(valid => {
+  isGithubTokenValid = valid;
+  console.log(`GitHub token validation complete. Token is ${valid ? 'valid' : 'invalid'}.`);
+});
 
 // Interface definitions for typesafety
 interface ServerRecord {
   id: string;
   name: string;
-  url?: string;
-  api_url?: string;
+  health_check_url?: string; // Updated from url
+  api_documentation?: string; // Updated from api_url
   github_url?: string;
 }
 
@@ -62,7 +192,7 @@ serve(async (req) => {
     // Get servers to process
     const { data: servers, error } = await supabase
       .from('servers')
-      .select('id, name, url, api_url, github_url')
+      .select('id, name, health_check_url, api_documentation, github_url')
       .is('last_tools_scan', null)
       .order('created_at', { ascending: false })
       .limit(5);
@@ -169,7 +299,7 @@ serve(async (req) => {
 /**
  * Detect tools for an MCP server using a tiered approach
  * 
- * @param server The server object with id, name, url, api_url, and github_url
+ * @param server The server object with id, name, health_check_url, api_documentation, and github_url
  * @returns Array of detected tools
  */
 async function detectServerTools(server: ServerRecord): Promise<Tool[]> {
@@ -178,9 +308,9 @@ async function detectServerTools(server: ServerRecord): Promise<Tool[]> {
   let detectionSource = '';
   
   // Tier 1: Try standard MCP API endpoint for tool definitions
-  if (server.api_url) {
+  if (server.api_documentation) {
     try {
-      const standardEndpoint = `${server.api_url.replace(/\/$/, '')}/list_resources`;
+      const standardEndpoint = `${server.api_documentation.replace(/\/$/, '')}/list_resources`;
       console.log(`Trying standard MCP endpoint: ${standardEndpoint}`);
       
       tools = await detectToolsFromEndpoint(standardEndpoint);
@@ -203,8 +333,8 @@ async function detectServerTools(server: ServerRecord): Promise<Tool[]> {
   }
   
   // Tier 2: Check common alternative endpoints
-  if (server.api_url || server.url) {
-    const baseUrl = server.api_url || server.url;
+  if (server.api_documentation || server.health_check_url) {
+    const baseUrl = server.api_documentation || server.health_check_url;
     if (baseUrl) {
       const alternativeEndpoints = [
         `${baseUrl.replace(/\/$/, '')}/tools`,
@@ -392,32 +522,61 @@ function processTool(tool: any): Tool | null {
  * @returns Array of detected tools
  */
 async function detectToolsFromRepository(githubUrl: string): Promise<Tool[]> {
+  // Skip repository detection if token is invalid
+  if (!githubToken || !isGithubTokenValid) {
+    console.warn(`Skipping GitHub repository detection for ${githubUrl} - no valid GitHub token available`);
+    return [];
+  }
+
   try {
     // Extract owner and repo from GitHub URL
     const match = githubUrl.match(/github\.com\/([^\/]+)\/([^\/]+)/);
     if (!match) {
+      console.warn(`Invalid GitHub URL format: ${githubUrl}`);
       return [];
     }
     
     const [_, owner, repo] = match;
+    console.log(`Detecting tools from GitHub repository: ${owner}/${repo}`);
     
     // Search for tool definition files
     const tools: Tool[] = [];
     
     // Look for common tool definition files first
     const toolFiles = await findToolDefinitionFiles(owner, repo);
+    
+    if (toolFiles.length === 0) {
+      console.log(`No tool definition files found in ${owner}/${repo}`);
+      return [];
+    }
+    
+    console.log(`Found ${toolFiles.length} potential tool definition files in ${owner}/${repo}`);
+    
     for (const file of toolFiles) {
       try {
+        console.log(`Extracting tools from ${file} in ${owner}/${repo}`);
         const fileTools = await extractToolsFromFile(owner, repo, file);
-        tools.push(...fileTools);
+        
+        if (fileTools.length > 0) {
+          console.log(`Found ${fileTools.length} tools in ${file}`);
+          tools.push(...fileTools);
+        }
       } catch (err) {
         console.error(`Error extracting tools from file ${file}:`, err);
       }
     }
     
-    return tools;
+    // Set detection source for all tools
+    if (tools.length > 0) {
+      return tools.map(tool => ({
+        ...tool,
+        detection_source: 'github_repository'
+      }));
+    }
+    
+    return [];
   } catch (err) {
-    console.error(`Error detecting tools from repository:`, err);
+    console.error(`Error detecting tools from repository ${githubUrl}:`, err);
     return [];
   }
 }
@@ -430,67 +589,105 @@ async function detectToolsFromRepository(githubUrl: string): Promise<Tool[]> {
  * @returns Array of file paths
  */
 async function findToolDefinitionFiles(owner: string, repo: string): Promise<string[]> {
+  // Skip if GitHub token is invalid
+  if (!githubToken || !isGithubTokenValid) {
+    console.warn(`Cannot search for tool definition files in ${owner}/${repo} - no valid GitHub token`);
+    return [];
+  }
+  
   try {
     // Search for common tool definition file patterns
     const searchPatterns = [
-      'tools.json', 
-      'tools.yaml', 
-      'tools.yml',
-      'functions.json', 
-      'functions.yaml', 
-      'functions.yml',
-      'schema.json', 
-      'schema.yaml', 
-      'schema.yml',
-      'openapi.json', 
-      'openapi.yaml', 
-      'openapi.yml',
-      'swagger.json', 
-      'swagger.yaml', 
-      'swagger.yml'
+      // MCP specific configuration files
+      'mcp-server.js', 'mcp-server.ts', 'mcp-server.json',
+      'mcp.config.js', 'mcp.config.ts', 'mcp.config.json',
+      'windsurf.config.js', 'windsurf.config.ts', 'windsurf.config.json',
+      
+      // Tool definition files
+      'tools.json', 'tools.yaml', 'tools.yml',
+      'functions.json', 'functions.yaml', 'functions.yml',
+      'schema.json', 'schema.yaml', 'schema.yml',
+      
+      // API documentation
+      'openapi.json', 'openapi.yaml', 'openapi.yml',
+      'swagger.json', 'swagger.yaml', 'swagger.yml'
     ];
     
     const foundFiles: string[] = [];
+    let rateLimitRemaining = 0;
+    let rateLimitReset = 0;
     
-    // Reason: Using GitHub search API to efficiently find files across the repository
-    // This is more efficient than recursively traversing the repository structure
-    for (const pattern of searchPatterns) {
-      try {
-        const searchUrl = `https://api.github.com/search/code?q=${encodeURIComponent(`filename:${pattern} repo:${owner}/${repo}`)}`;
-        
-        const headers: HeadersInit = {
-          'Accept': 'application/vnd.github.v3+json'
-        };
-        
-        // Add authentication if a token is available
-        if (githubToken) {
-          headers['Authorization'] = `token ${githubToken}`;
-        }
-        
-        const response = await fetch(searchUrl, { headers });
-        
-        if (response.ok) {
-          const data = await response.json();
-          if (data.items && data.items.length > 0) {
-            for (const item of data.items) {
-              foundFiles.push(item.path);
+    // Process patterns in smaller batches to respect rate limits
+    const batchSize = 5;
+    for (let i = 0; i < searchPatterns.length; i += batchSize) {
+      const batch = searchPatterns.slice(i, i + batchSize);
+      
+      // Process batch in parallel with a Promise.all
+      const batchPromises = batch.map(async (pattern) => {
+        try {
+          // Wait if we're approaching rate limits
+          if (rateLimitRemaining < 2) {
+            const waitTime = (rateLimitReset * 1000) - Date.now() + 1000; // Add 1 second buffer
+            if (waitTime > 0) {
+              console.log(`Rate limit approaching, waiting ${waitTime}ms before continuing`);
+              await new Promise(resolve => setTimeout(resolve, waitTime));
             }
           }
-        } else {
-          const errorText = await response.text();
-          console.error(`GitHub search failed for ${pattern}: ${response.status} ${errorText}`);
           
-          // If we hit rate limits, pause before continuing
-          if (response.status === 403) {
-            await new Promise(resolve => setTimeout(resolve, 2000));
+          const searchUrl = `https://api.github.com/search/code?q=${encodeURIComponent(`filename:${pattern} repo:${owner}/${repo}`)}`;
+          
+          const headers: HeadersInit = {
+            'Accept': 'application/vnd.github.v3+json',
+            'Authorization': `token ${githubToken}`
+          };
+          
+          // Use fetchWithRetry for better reliability
+          const response = await fetchWithRetry(searchUrl, { headers }, 2, 15000);
+          
+          // Update rate limit info from response headers
+          rateLimitRemaining = parseInt(response.headers.get('x-ratelimit-remaining') || '60', 10);
+          rateLimitReset = parseInt(response.headers.get('x-ratelimit-reset') || '0', 10);
+          
+          if (response.ok) {
+            const data = await response.json();
+            if (data.items && data.items.length > 0) {
+              console.log(`Found ${data.items.length} matches for pattern '${pattern}' in ${owner}/${repo}`);
+              return data.items.map((item: any) => item.path);
+            }
+          } else {
+            // Handle specific error cases
+            if (response.status === 403) {
+              const resetTime = response.headers.get('x-ratelimit-reset');
+              console.error(`GitHub rate limit exceeded. Resets at ${new Date(parseInt(resetTime || '0', 10) * 1000).toISOString()}`);
+              
+              // Wait a bit before continuing
+              await new Promise(resolve => setTimeout(resolve, 5000));
+            } else if (response.status === 404) {
+              console.warn(`Pattern '${pattern}' not found in ${owner}/${repo}`);
+            } else {
+              const errorData = await response.json().catch(() => ({}));
+              console.error(`GitHub search failed for ${pattern}: ${response.status}`, errorData.message || '');
+            }
           }
+        } catch (err) {
+          console.error(`Error searching for ${pattern} in ${owner}/${repo}:`, err);
         }
-      } catch (err) {
-        console.error(`Error searching for ${pattern} in ${owner}/${repo}:`, err);
+        return [];
+      });
+      
+      // Collect results from this batch
+      const batchResults = await Promise.all(batchPromises);
+      batchResults.forEach(files => foundFiles.push(...files));
+      
+      // Wait a bit between batches to be gentle on the API
+      if (i + batchSize < searchPatterns.length) {
+        await new Promise(resolve => setTimeout(resolve, 1000));
       }
     }
     
-    return foundFiles;
+    // Remove duplicates
+    const uniqueFiles = [...new Set(foundFiles)];
+    return uniqueFiles;
   } catch (err) {
     console.error(`Error finding tool definition files for ${owner}/${repo}:`, err);
     return [];
@@ -498,69 +695,209 @@ async function findToolDefinitionFiles(owner: string, repo: string): Promise<str
 }
 
 /**
- * Extract tools from a repository file
+ * Extract tools from a file in a GitHub repository
  * 
  * @param owner GitHub repository owner
  * @param repo GitHub repository name
- * @param filePath Path to the file
+ * @param filePath Path to the file in the repository
  * @returns Array of detected tools
  */
 async function extractToolsFromFile(owner: string, repo: string, filePath: string): Promise<Tool[]> {
   try {
-    // Fetch the file content
+    // Fetch file content from GitHub
+    const fileUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${filePath}`;
+    
     const headers: HeadersInit = {
-      'Accept': 'application/vnd.github.v3.raw'
+      'Accept': 'application/vnd.github.v3+json',
+      'Authorization': `token ${githubToken}`
     };
     
-    // Add authentication if a token is available
-    if (githubToken) {
-      headers['Authorization'] = `token ${githubToken}`;
-    }
-    
-    const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${filePath}`, {
-      headers
-    });
+    console.log(`Fetching file contents from ${filePath}`);
+    const response = await fetchWithRetry(fileUrl, { headers }, 2, 10000);
     
     if (!response.ok) {
-      throw new Error(`GitHub API returned ${response.status}`);
-    }
-    
-    const content = await response.text();
-    let toolsData: any;
-    
-    // Parse the content based on file extension
-    if (filePath.endsWith('.json')) {
-      toolsData = JSON.parse(content);
-    } else if (filePath.endsWith('.yaml') || filePath.endsWith('.yml')) {
-      const { parse } = await import('https://deno.land/std@0.177.0/yaml/mod.ts');
-      toolsData = parse(content);
-    } else {
+      if (response.status === 404) {
+        console.warn(`File ${filePath} not found in ${owner}/${repo}`);
+      } else {
+        console.error(`Failed to fetch file ${filePath}: ${response.status} ${response.statusText}`);
+      }
       return [];
     }
     
-    // Extract tools based on common patterns
-    let tools: Tool[] = [];
+    const data = await response.json();
     
-    // Pattern 1: Array of tool objects
-    if (Array.isArray(toolsData)) {
-      tools = toolsData.map(processTool).filter(Boolean) as Tool[];
-    } 
-    // Pattern 2: Object with tools property
-    else if (toolsData.tools && Array.isArray(toolsData.tools)) {
-      tools = toolsData.tools.map(processTool).filter(Boolean) as Tool[];
+    if (!data.content) {
+      console.warn(`No content found in file ${filePath} or file is a directory`);
+      return [];
     }
-    // Pattern 3: Object with functions property
-    else if (toolsData.functions && Array.isArray(toolsData.functions)) {
-      tools = toolsData.functions.map(processTool).filter(Boolean) as Tool[];
+    
+    // Decode base64 content
+    const content = atob(data.content.replace(/\n/g, ''));
+    
+    // Parse file content based on extension
+    const tools: Tool[] = [];
+    const extension = filePath.split('.').pop()?.toLowerCase();
+    
+    console.log(`Processing ${filePath} with extension '${extension}'`);
+    
+    if (extension === 'json') {
+      try {
+        const json = JSON.parse(content);
+        
+        // Check for different JSON formats
+        if (Array.isArray(json)) {
+          // Array of tool objects
+          console.log(`Found array of ${json.length} potential tools in JSON file`);
+          const extractedTools = json.map(processTool).filter(Boolean) as Tool[];
+          tools.push(...extractedTools);
+        } else if (json.tools && Array.isArray(json.tools)) {
+          // Object with tools property
+          console.log(`Found 'tools' array with ${json.tools.length} items in JSON file`);
+          const extractedTools = json.tools.map(processTool).filter(Boolean) as Tool[];
+          tools.push(...extractedTools);
+        } else if (json.functions && Array.isArray(json.functions)) {
+          // Object with functions property
+          console.log(`Found 'functions' array with ${json.functions.length} items in JSON file`);
+          const extractedTools = json.functions.map(processTool).filter(Boolean) as Tool[];
+          tools.push(...extractedTools);
+        } else if (json.paths) {
+          // OpenAPI/Swagger format
+          console.log(`Found OpenAPI/Swagger format with ${Object.keys(json.paths).length} paths`);
+          const extractedTools = extractToolsFromOpenApi(json);
+          tools.push(...extractedTools);
+        }
+      } catch (err) {
+        console.error(`Error parsing JSON file ${filePath}:`, err);
+      }
+    } else if (extension === 'yaml' || extension === 'yml') {
+      try {
+        // @ts-ignore: Deno-specific import
+        const { parse } = await import('https://deno.land/std@0.177.0/yaml/mod.ts');
+        const yaml = parse(content);
+        
+        // Check for different YAML formats
+        if (Array.isArray(yaml)) {
+          // Array of tool objects
+          console.log(`Found array of ${yaml.length} potential tools in YAML file`);
+          const extractedTools = yaml.map(processTool).filter(Boolean) as Tool[];
+          tools.push(...extractedTools);
+        } else if (yaml.tools && Array.isArray(yaml.tools)) {
+          // Object with tools property
+          console.log(`Found 'tools' array with ${yaml.tools.length} items in YAML file`);
+          const extractedTools = yaml.tools.map(processTool).filter(Boolean) as Tool[];
+          tools.push(...extractedTools);
+        } else if (yaml.functions && Array.isArray(yaml.functions)) {
+          // Object with functions property
+          console.log(`Found 'functions' array with ${yaml.functions.length} items in YAML file`);
+          const extractedTools = yaml.functions.map(processTool).filter(Boolean) as Tool[];
+          tools.push(...extractedTools);
+        } else if (yaml.paths) {
+          // OpenAPI/Swagger format
+          console.log(`Found OpenAPI/Swagger format with ${Object.keys(yaml.paths).length} paths`);
+          const extractedTools = extractToolsFromOpenApi(yaml);
+          tools.push(...extractedTools);
+        }
+      } catch (err) {
+        console.error(`Error parsing YAML file ${filePath}:`, err);
+      }
+    } else if (extension === 'js' || extension === 'ts') {
+      // Look for tool definitions in JavaScript/TypeScript files
+      try {
+        const extractedTools = extractToolsFromJsContent(content);
+        if (extractedTools.length > 0) {
+          console.log(`Found ${extractedTools.length} tools in JS/TS file ${filePath}`);
+          tools.push(...extractedTools);
+        }
+      } catch (err) {
+        console.error(`Error extracting tools from JS/TS file ${filePath}:`, err);
+      }
     }
-    // Pattern 4: OpenAPI/Swagger format
-    else if (toolsData.paths) {
-      tools = extractToolsFromOpenApi(toolsData);
+    
+    if (tools.length > 0) {
+      console.log(`Extracted ${tools.length} tools from ${filePath}`);
     }
     
     return tools;
   } catch (err) {
     console.error(`Error extracting tools from file ${filePath} in ${owner}/${repo}:`, err);
+    return [];
+  }
+}
+
+/**
+ * Extract tools from OpenAPI/Swagger specification
+ * 
+ * @param spec OpenAPI/Swagger specification object
+ * @returns Array of detected tools
+ */
+/**
+ * Extract tools from JavaScript or TypeScript content
+ * 
+ * @param content The JS/TS file content as string
+ * @returns Array of detected tools
+ */
+function extractToolsFromJsContent(content: string): Tool[] {
+  const tools: Tool[] = [];
+  
+  try {
+    // Look for tool definitions using regex patterns
+    for (const pattern of TOOL_REGEX_PATTERNS) {
+      let match;
+      while ((match = pattern.exec(content)) !== null) {
+        // Extract name and description from the match
+        const name = match[1]?.trim();
+        const description = match[2]?.trim();
+        
+        if (name && description) {
+          console.log(`Found tool in JS/TS: ${name}`);
+          tools.push({
+            name,
+            description,
+            method: 'POST', // Default method
+            endpoint: `/${name}`, // Default endpoint based on name
+            parameters: [], // Default empty parameters
+            detection_source: 'js_content'
+          });
+        }
+      }
+    }
+    
+    // Look for OpenAI function calling format
+    if (content.includes('function_call') || 
+        content.includes('functions:') || 
+        content.includes('tools:')) {
+      // Extract potential function names
+      const functionNameMatches = content.match(/['"]?name['"]?\s*:\s*['"]([^'"]+)['"]\s*/g);
+      if (functionNameMatches && functionNameMatches.length > 0) {
+        console.log(`Found ${functionNameMatches.length} potential function names in OpenAI format`);
+        
+        // Try to extract associated descriptions
+        for (const nameMatch of functionNameMatches) {
+          const name = nameMatch.match(/['"]([^'"]+)['"]\s*$/)?.[1];
+          if (name && !tools.some(t => t.name === name)) {
+            // Find description near the name (simple heuristic)
+            const descIndex = content.indexOf(nameMatch) + nameMatch.length;
+            const descSection = content.substring(descIndex, descIndex + 200);
+            const descMatch = descSection.match(/['"]?description['"]?\s*:\s*['"]([^'"]+)['"]\s*/)?.[1];
+            
+            if (descMatch) {
+              tools.push({
+                name,
+                description: descMatch.trim(),
+                method: 'POST', // Default method
+                endpoint: `/${name}`, // Default endpoint based on name
+                parameters: [], // Default empty parameters
+                detection_source: 'js_content'
+              });
+            }
+          }
+        }
+      }
+    }
+    
+    return tools;
+  } catch (err) {
+    console.error('Error parsing JS/TS content:', err);
     return [];
   }
 }

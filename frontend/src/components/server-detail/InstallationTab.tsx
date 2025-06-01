@@ -37,11 +37,38 @@ export default function InstallationTab({
   const [error, setError] = useState<string | null>(null);
   const [selectedLanguage, setSelectedLanguage] = useState('bash');
   
+  // Enhanced language options with icons
   const languages = [
-    { id: 'bash', name: 'Bash/Shell' },
-    { id: 'powershell', name: 'PowerShell' },
-    { id: 'javascript', name: 'JavaScript/Node' },
-    { id: 'python', name: 'Python' }
+    { 
+      id: 'bash', 
+      name: 'Bash/Shell',
+      icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/bash/bash-original.svg'
+    },
+    { 
+      id: 'powershell', 
+      name: 'PowerShell',
+      icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/windows8/windows8-original.svg'
+    },
+    { 
+      id: 'javascript', 
+      name: 'JavaScript/Node',
+      icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg'
+    },
+    { 
+      id: 'python', 
+      name: 'Python',
+      icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg'
+    },
+    { 
+      id: 'ruby', 
+      name: 'Ruby',
+      icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/ruby/ruby-original.svg'
+    },
+    { 
+      id: 'go', 
+      name: 'Go',
+      icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/go/go-original.svg'
+    }
   ];
 
   useEffect(() => {
@@ -129,12 +156,15 @@ export default function InstallationTab({
         <label className="text-sm text-gray-600 mb-2 block">
           Select Language / Platform
         </label>
-        <LanguageSelector
-          languages={languages}
-          selectedLanguage={selectedLanguage}
-          onLanguageChange={(langId) => setSelectedLanguage(langId)}
-          className="w-full"
-        />
+        <div className="mb-5">
+          <LanguageSelector
+            languages={languages}
+            selectedLanguage={selectedLanguage}
+            onLanguageChange={setSelectedLanguage}
+            persistKey={`server_${effectiveServerId}`} // Use server ID for persistence key
+            className="w-full md:w-64"
+          />
+        </div>
       </div>
 
       <div className="space-y-8">
