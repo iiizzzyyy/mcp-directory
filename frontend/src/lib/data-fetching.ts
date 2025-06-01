@@ -64,14 +64,22 @@ export const getServerDetail = cache(async (idOrSlug: string): Promise<Server | 
       supabase = createServerSupabaseClient();
     }
 
-    // First try to get by ID
-    let { data: server, error } = await supabase
-      .from('servers')
-      .select('*')
-      .eq('id', idOrSlug)
-      .maybeSingle();
+    // Check if the idOrSlug is a valid UUID before querying by ID
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(idOrSlug);
+    
+    let server;
+    let error;
 
-    // If not found by ID, try by slug
+    // Only try to get by ID if it's a valid UUID
+    if (isUuid) {
+      ({ data: server, error } = await supabase
+        .from('servers')
+        .select('*')
+        .eq('id', idOrSlug)
+        .maybeSingle());
+    }
+
+    // If not found by ID or not a UUID, try by slug
     if (!server && !error) {
       ({ data: server, error } = await supabase
         .from('servers')
