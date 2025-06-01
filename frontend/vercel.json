@@ -10,5 +10,22 @@
   "env": {
     "NEXT_PUBLIC_SUPABASE_URL": "https://nryytfezkmptcmpawlva.supabase.co",
     "NEXT_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5yeXl0ZmV6a21wdGNtcGF3bHZhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTc1NTU5MzUsImV4cCI6MjAzMzEzMTkzNX0.wP7E-WiJyuLIzQAO3gVgfGLgUYgY7vQTZEcS1QUMYvA"
-  }
+  },
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        { "key": "Access-Control-Allow-Credentials", "value": "true" },
+        { "key": "Access-Control-Allow-Origin", "value": "*" },
+        { "key": "Access-Control-Allow-Methods", "value": "GET,OPTIONS,PATCH,DELETE,POST,PUT" },
+        { "key": "Access-Control-Allow-Headers", "value": "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version" }
+      ]
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "/api/:path*"
+    }
+  ]
 }
