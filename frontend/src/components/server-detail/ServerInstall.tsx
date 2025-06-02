@@ -24,6 +24,8 @@ interface ServerInstallProps {
  * 
  * This component replaces the previous client-side implementation
  * which used direct fetch calls to edge functions
+ * 
+ * Updated to handle HTML content in the install_instructions field
  */
 export default async function ServerInstall({ 
   serverId, 
@@ -65,8 +67,34 @@ export default async function ServerInstall({
       result = response.data;
     }
     
-    // If we have installation instructions, render the client component with the data
-    if (result && result.data && Array.isArray(result.data)) {
+    // Check for newer response format from the edge function (with instructions object)
+    if (result && result.instructions && typeof result.instructions === 'object') {
+      // Convert the object format to array format expected by ClientInstallationTab
+      const instructionsArray = Object.entries(result.instructions)
+        .filter(([platform]) => platform !== 'all') // Filter out 'all' platform as it's handled separately
+        .map(([platform, instructions]) => ({
+          platform,
+          install_command: typeof instructions === 'string' ? instructions : JSON.stringify(instructions),
+        }));
+      
+      // Check if there's HTML content in the 'all' platform
+      const htmlInstructions = {};
+      if (result.instructions.all) {
+        htmlInstructions.all = result.instructions.all;
+      }
+      
+      return (
+        <ClientInstallationTab
+          instructions={instructionsArray}
+          serverId={serverId}
+          serverName={serverName}
+          defaultInstallCommand={defaultInstallCommand}
+          htmlInstructions={htmlInstructions}
+        />
+      );
+    }
+    // Handle legacy array format
+    else if (result && result.data && Array.isArray(result.data)) {
       return (
         <ClientInstallationTab
           instructions={result.data}

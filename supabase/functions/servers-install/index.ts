@@ -4,6 +4,38 @@
 // Import Supabase client
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
+/**
+ * Helper function to detect if a string contains HTML content
+ * @param str The string to check
+ * @returns True if the string appears to be HTML content
+ */
+function isHtmlContent(str: string): boolean {
+  if (typeof str !== 'string') return false;
+  
+  // Check for common HTML tags
+  return (
+    (str.includes('<h1') || str.includes('<h2') || str.includes('<h3') ||
+     str.includes('<p>') || str.includes('<div') || str.includes('<ul') ||
+     str.includes('<ol') || str.includes('<li') || str.includes('<table') ||
+     str.includes('<a href') || str.includes('<img')) &&
+    (str.includes('</') || str.includes('/>'))
+  );
+}
+
+/**
+ * Helper function to create a platform-specific installation structure for HTML content
+ * @param htmlContent The HTML content to include
+ * @returns An object with platform-specific instructions
+ */
+function createHtmlInstructionFormat(htmlContent: string) {
+  return {
+    all: htmlContent,
+    linux: "See the 'All Platforms' tab for detailed installation instructions.",
+    macos: "See the 'All Platforms' tab for detailed installation instructions.",
+    windows: "See the 'All Platforms' tab for detailed installation instructions."
+  };
+}
+
 // Define response headers with CORS support
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -115,6 +147,14 @@ Deno.serve(async (req) => {
             console.error(`Error parsing install_instructions as JSON for server ${serverId}:`, e)
           }
         }
+        // Check if it's HTML content
+        else if (typeof server.install_instructions === 'string' && 
+                isHtmlContent(server.install_instructions)) {
+          // Create a special format for HTML content with an 'all' platform
+          const htmlContent = server.install_instructions.toString()
+          instructions = createHtmlInstructionFormat(htmlContent)
+          console.log(`Detected HTML content in install_instructions for server ${serverId}, created special format`)
+        }
         // Otherwise create a default structure with the content
         else {
           const content = server.install_instructions?.toString() || ''
@@ -183,13 +223,22 @@ Deno.serve(async (req) => {
     // Get available platforms from the instructions object
     const platforms = Object.keys(instructions)
 
+    // Add 'all' to the beginning of platforms list if it exists
+    if (instructions.all && !platforms.includes('all')) {
+      platforms.unshift('all')
+    }
+    
+    // Determine default platform (prefer 'all' if it exists)
+    const defaultPlatform = platforms.includes('all') ? 'all' : 
+                           platforms.includes('macos') ? 'macos' : platforms[0];
+
     // Return successful response
     return new Response(
       JSON.stringify({
         success: true,
         instructions: instructions,
         platforms: platforms,
-        defaultPlatform: platforms.includes('macos') ? 'macos' : platforms[0],
+        defaultPlatform: defaultPlatform,
         codeBlocks: codeBlocks
       }),
       { 

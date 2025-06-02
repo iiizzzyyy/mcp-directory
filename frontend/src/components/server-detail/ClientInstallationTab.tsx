@@ -2,14 +2,18 @@
 
 import { useState, useEffect } from 'react';
 import InstallBlock from './InstallBlock';
+import HtmlInstallBlock from './HtmlInstallBlock';
 import LanguageSelector from './LanguageSelector';
+import { Info } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 interface InstallInstruction {
   platform: string;
-  icon_url: string | null;
+  icon_url?: string | null;
   install_command: string;
   additional_steps?: string | null;
   requirements?: string | null;
+  html_content?: string; // New field for HTML content
 }
 
 interface ClientInstallationTabProps {
@@ -17,22 +21,42 @@ interface ClientInstallationTabProps {
   serverName?: string;
   defaultInstallCommand?: string;
   instructions: InstallInstruction[];
+  htmlInstructions?: Record<string, string>; // Platform to HTML content mapping
 }
 
 /**
  * Client component that handles the interactive UI elements for installation
  * Works with the ServerInstall component which fetches the data server-side
+ * Supports both standard installation commands and HTML content
  */
 export default function ClientInstallationTab({ 
   serverId, 
   serverName,
   defaultInstallCommand,
-  instructions
+  instructions,
+  htmlInstructions = {}
 }: ClientInstallationTabProps) {
-  const [selectedLanguage, setSelectedLanguage] = useState('bash');
+  // Start with 'all' platform if available, otherwise default to bash
+  const [selectedLanguage, setSelectedLanguage] = useState(htmlInstructions?.all ? 'all' : 'bash');
+  
+  // Keep track of whether we're displaying HTML content
+  const [hasHtmlContent, setHasHtmlContent] = useState(false);
+  
+  // Check for HTML content
+  useEffect(() => {
+    setHasHtmlContent(!!htmlInstructions?.all);
+  }, [htmlInstructions]);
   
   // Enhanced language options with icons
+  // Build language options - conditionally add 'all' platform if HTML content exists
   const languages = [
+    ...(htmlInstructions?.all ? [
+      {
+        id: 'all',
+        name: 'All Platforms',
+        icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg'
+      }
+    ] : []),
     { 
       id: 'bash', 
       name: 'Bash/Shell',
@@ -65,6 +89,34 @@ export default function ClientInstallationTab({
     }
   ];
 
+  // If we have HTML content but no structured instructions, use HTML content
+  if (instructions.length === 0 && htmlInstructions?.all) {
+    return (
+      <div className="space-y-6">
+        <div className="mb-6">
+          <h2 className="text-xl font-semibold">Installation Instructions</h2>
+          <p className="text-gray-600 mt-1">
+            Install {serverName || "this MCP server"} on your preferred platform
+          </p>
+        </div>
+        
+        <Alert variant="info" className="mb-4">
+          <Info className="h-4 w-4" />
+          <AlertDescription>
+            These installation instructions apply to all platforms.
+          </AlertDescription>
+        </Alert>
+        
+        <HtmlInstallBlock
+          platform="All Platforms"
+          htmlContent={htmlInstructions.all}
+          className="border-gray-200"
+        />
+      </div>
+    );
+  }
+  
+  // If no instructions and no HTML content
   if (instructions.length === 0) {
     return (
       <div className="space-y-4">
@@ -110,7 +162,17 @@ export default function ClientInstallationTab({
       </div>
 
       <div className="space-y-8">
-        {instructions.map((instruction, index) => (
+        {/* Render HTML content if selected */}
+        {selectedLanguage === 'all' && htmlInstructions?.all && (
+          <HtmlInstallBlock
+            platform="All Platforms"
+            htmlContent={htmlInstructions.all}
+            className="border-gray-200"
+          />
+        )}
+        
+        {/* Render normal installation blocks */}
+        {selectedLanguage !== 'all' && instructions.map((instruction, index) => (
           <InstallBlock
             key={index}
             platform={instruction.platform}
