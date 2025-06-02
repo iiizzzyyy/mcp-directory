@@ -72,10 +72,10 @@ export async function GET(
         // First attempt with createServerComponentClient
         const supabase = createServerComponentClient({ cookies });
         
-        // Query the database for server first
+        // Query the database for server first - now include install_code_blocks
         const { data: server, error: serverError } = await supabase
           .from('servers')
-          .select('id, name, install_instructions')
+          .select('id, name, install_instructions, install_code_blocks')
           .eq('id', id)
           .maybeSingle();
         
@@ -91,9 +91,10 @@ export async function GET(
           );
         }
         
-        if (server.install_instructions) {
+        if (server.install_instructions || server.install_code_blocks) {
           return NextResponse.json({
-            instructions: server.install_instructions,
+            instructions: server.install_instructions || {},
+            code_blocks: server.install_code_blocks || {},
             platforms: ['linux', 'macos', 'windows'], // Default platforms
             defaultPlatform: 'macos'
           });
@@ -106,6 +107,7 @@ export async function GET(
             macos: '# Installation instructions not available\nPlease check the official documentation.',
             windows: '# Installation instructions not available\nPlease check the official documentation.'
           },
+          code_blocks: {},
           platforms: ['linux', 'macos', 'windows'],
           defaultPlatform: 'macos'
         });
@@ -117,7 +119,7 @@ export async function GET(
         
         const { data: server, error: serverError } = await directClient
           .from('servers')
-          .select('id, name, install_instructions')
+          .select('id, name, install_instructions, install_code_blocks')
           .eq('id', id)
           .maybeSingle();
         
@@ -133,10 +135,11 @@ export async function GET(
           );
         }
         
-        if (server.install_instructions) {
+        if (server.install_instructions || server.install_code_blocks) {
           return NextResponse.json({
-            instructions: server.install_instructions,
-            platforms: ['linux', 'macos', 'windows'],
+            instructions: server.install_instructions || {},
+            code_blocks: server.install_code_blocks || {},
+            platforms: ['linux', 'macos', 'windows'], // Default platforms
             defaultPlatform: 'macos'
           });
         }
@@ -148,6 +151,7 @@ export async function GET(
             macos: '# Installation instructions not available\nPlease check the official documentation.',
             windows: '# Installation instructions not available\nPlease check the official documentation.'
           },
+          code_blocks: {},
           platforms: ['linux', 'macos', 'windows'],
           defaultPlatform: 'macos'
         });

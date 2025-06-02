@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { formatDistanceToNow } from 'date-fns';
+import { OverviewTab } from "@/components/server-detail/OverviewTab";
 
 // Import client components only in this client component
 import { Server } from '@/lib/types/index';
@@ -193,44 +194,22 @@ export function ServerDetailClient({ server, error }: ServerDetailClientProps) {
           <TabsTrigger value="metrics">Metrics</TabsTrigger>
         </TabsList>
         
-        {/* Overview Tab - Static content, safe to keep in client component */}
-        <TabsContent value="overview" className="space-y-6">
-          <div className="grid gap-6 md:grid-cols-2">
-            <div className="space-y-4">
-              <h3 className="text-xl font-semibold">About</h3>
-              <p>{server.description}</p>
-              
-              <div>
-                <h4 className="font-medium mb-2">Features</h4>
-                <ul className="list-disc pl-5 space-y-1">
-                  <li>Feature 1</li>
-                  <li>Feature 2</li>
-                  <li>Feature 3</li>
-                </ul>
-              </div>
-            </div>
-            
-            <div className="space-y-4">
-              <h3 className="text-xl font-semibold">Quick Start</h3>
-              
-              {server.install_command && (
-                <div className="bg-muted p-4 rounded-md overflow-x-auto">
-                  <pre className="text-sm">
-                    <code>{server.install_command}</code>
-                  </pre>
-                </div>
-              )}
-              
-              <p className="text-sm text-muted-foreground">
-                Visit the <button 
-                  onClick={() => setActiveTab('installation')}
-                  className="text-primary underline"
-                >
-                  Installation
-                </button> tab for more details.
-              </p>
-            </div>
-          </div>
+        {/* Overview Tab */}
+        <TabsContent value="overview" className="space-y-4">
+          <OverviewTab
+            description={server.description}
+            readme_overview={server.readme_overview}
+            tags={server.tags || []}
+            category={server.category}
+            platform={server.platform}
+            installMethod={server.install_method}
+            githubUrl={server.github_url}
+            stars={server.stars}
+            forks={server.forks}
+            openIssues={server.open_issues}
+            contributors={server.contributors}
+            lastUpdated={server.last_updated}
+          />
         </TabsContent>
         
         {/* Other tab contents are rendered by server components */}

@@ -27,6 +27,11 @@ export interface Server {
   compatibility?: any[];
   health_history?: any[];
   changelog?: any[];
+  // Database schema fields
+  readme_overview?: string; // Rich HTML content from repository README
+  readme_last_updated?: string; // Timestamp for when README was last parsed
+  install_instructions?: Record<string, any>; // JSONB with platform-specific installation instructions
+  install_code_blocks?: Record<string, any>; // JSONB with code blocks for different installation methods
 }
 
 // Component Props Types

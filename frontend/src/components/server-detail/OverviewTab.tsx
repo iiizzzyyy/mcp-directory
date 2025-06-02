@@ -7,6 +7,7 @@ import { formatDistanceToNow } from 'date-fns';
 
 interface OverviewTabProps {
   description: string;
+  readme_overview?: string;
   tags: string[];
   category?: string;
   platform?: string;
@@ -25,6 +26,7 @@ interface OverviewTabProps {
  */
 export function OverviewTab({
   description,
+  readme_overview,
   tags,
   category,
   platform,
@@ -41,7 +43,14 @@ export function OverviewTab({
       {/* Description section */}
       <section>
         <h3 className="text-lg font-medium mb-2">Description</h3>
-        <p className="text-muted-foreground whitespace-pre-line">{description}</p>
+        {readme_overview ? (
+          <div 
+            className="text-muted-foreground prose prose-sm max-w-none"
+            dangerouslySetInnerHTML={{ __html: readme_overview }}
+          />
+        ) : (
+          <p className="text-muted-foreground whitespace-pre-line">{description}</p>
+        )}
       </section>
       
       <Separator />
