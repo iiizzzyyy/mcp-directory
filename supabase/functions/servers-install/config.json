@@ -1,0 +1,4 @@
+{
+  "imports": ["https://esm.sh/@supabase/supabase-js@2.36.0"],
+  "envVars": ["SUPABASE_URL", "SUPABASE_ANON_KEY"]
+}

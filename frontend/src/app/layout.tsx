@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 import { Inter, Open_Sans } from 'next/font/google'
 import { AuthProvider } from '@/contexts/AuthProvider'
 import LayoutShell from '@/components/layout/LayoutShell'
+import { Toaster } from '@/components/ui/toaster'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -23,7 +24,17 @@ export default function RootLayout({
           <LayoutShell>
             {children}
           </LayoutShell>
+          <Toaster />
         </AuthProvider>
+        {/* Client-side detection script (migrated from _document.js) */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              // This script helps handle client-side detection
+              window.__IS_CLIENT__ = true;
+            `,
+          }}
+        />
       </body>
     </html>
   )

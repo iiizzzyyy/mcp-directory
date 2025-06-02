@@ -4,8 +4,10 @@ A comprehensive directory for Model Context Protocol (MCP) servers with dynamic 
 
 ## Features
 
+- **Welcoming Landing Page**: Clear value proposition with hero section and registration CTA
 - **Server Discovery**: Browse and search across all available MCP servers
 - **Detailed Server Information**: View compatibility, health status, and installation instructions
+- **Tools Detection**: Automatic discovery and indexing of MCP server tools
 - **GitHub Integration**: Automatic enrichment of server data from GitHub repositories
 - **Health Monitoring**: Track uptime and performance metrics for MCP servers
 - **Submission System**: GitHub-powered server submission with validation
@@ -16,8 +18,9 @@ The MCP Directory consists of several integrated components:
 
 1. **Frontend**: Next.js application with dynamic SSR and client components using Tailwind and Shadcn UI
 2. **Database**: Supabase PostgreSQL with RLS policies for public/private data access
-3. **Edge Functions**: Supabase serverless functions for crawling, enrichment, and metrics
+3. **Edge Functions**: Supabase serverless functions for tools detection, crawling, enrichment, and metrics
 4. **MCP Integration**: Direct integration with Firecrawl MCP for web crawling
+5. **Tools Detection**: Multi-tier system for discovering MCP server tools via API endpoints and GitHub analysis
 
 ## Tech Stack
 
@@ -42,7 +45,15 @@ The project uses the following primary tables:
 - `health_data`: Health monitoring data for servers
 - `server_metrics`: Performance metrics time-series data
 - `server_install_instructions`: Platform-specific installation commands
+- `server_tools`: Tools detected for each MCP server
+- `tool_parameters`: Parameters for each detected tool
 - `pending_servers`: User-submitted servers awaiting review
+
+## Documentation
+
+Detailed documentation for specific features can be found in the `docs/` directory:
+
+- [Tools Detection System](./docs/tools-detection.md): Architecture and usage of the MCP tools detection system
 
 ## Deployment
 

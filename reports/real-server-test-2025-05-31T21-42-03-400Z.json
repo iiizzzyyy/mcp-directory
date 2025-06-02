@@ -1,0 +1,118 @@
+{
+  "timestamp": "2025-05-31T21:42:03.399Z",
+  "results": [
+    {
+      "server_name": "puppeteer-mcp",
+      "detection_tier": "error",
+      "expected_tier": "standard_mcp_api",
+      "tools_detected": 0,
+      "expected_tools": 7,
+      "passed": false,
+      "error": "Failed to invoke tools-detector: Internal Server Error",
+      "execution_time_ms": 477
+    },
+    {
+      "server_name": "supabase-mcp-server",
+      "detection_tier": "error",
+      "expected_tier": "standard_mcp_api",
+      "tools_detected": 0,
+      "expected_tools": 10,
+      "passed": false,
+      "error": "Failed to invoke tools-detector: Internal Server Error",
+      "execution_time_ms": 494
+    },
+    {
+      "server_name": "linear-mcp",
+      "detection_tier": "error",
+      "expected_tier": "standard_mcp_api",
+      "tools_detected": 0,
+      "expected_tools": 12,
+      "passed": false,
+      "error": "Failed to invoke tools-detector: Internal Server Error",
+      "execution_time_ms": 411
+    },
+    {
+      "server_name": "firecrawl-mcp",
+      "detection_tier": "error",
+      "expected_tier": "alternative_api",
+      "tools_detected": 0,
+      "expected_tools": 5,
+      "passed": false,
+      "error": "Failed to invoke tools-detector: Internal Server Error",
+      "execution_time_ms": 240
+    },
+    {
+      "server_name": "hubspot-mcp",
+      "detection_tier": "error",
+      "expected_tier": "alternative_api",
+      "tools_detected": 0,
+      "expected_tools": 14,
+      "passed": false,
+      "error": "Failed to invoke tools-detector: Internal Server Error",
+      "execution_time_ms": 373
+    },
+    {
+      "server_name": "gitmcp",
+      "detection_tier": "error",
+      "expected_tier": "github_repository",
+      "tools_detected": 0,
+      "expected_tools": 3,
+      "passed": false,
+      "error": "Failed to invoke tools-detector: Internal Server Error",
+      "execution_time_ms": 718
+    },
+    {
+      "server_name": "netlify-mcp",
+      "detection_tier": "error",
+      "expected_tier": "github_repository",
+      "tools_detected": 0,
+      "expected_tools": 4,
+      "passed": false,
+      "error": "Failed to insert test server: Could not find the 'test_id' column of 'servers' in the schema cache",
+      "execution_time_ms": 87
+    },
+    {
+      "server_name": "pulsemcp",
+      "detection_tier": "error",
+      "expected_tier": "github_repository",
+      "tools_detected": 0,
+      "expected_tools": 2,
+      "passed": false,
+      "error": "Failed to invoke tools-detector: Internal Server Error",
+      "execution_time_ms": 425
+    },
+    {
+      "server_name": "brave-search",
+      "detection_tier": "error",
+      "expected_tier": "github_repository",
+      "tools_detected": 0,
+      "expected_tools": 3,
+      "passed": false,
+      "error": "Failed to insert test server: Could not find the 'test_id' column of 'servers' in the schema cache",
+      "execution_time_ms": 91
+    }
+  ],
+  "summary": {
+    "total": 9,
+    "passed": 0,
+    "failed": 9
+  },
+  "duration_ms": 3316,
+  "tier_results": {
+    "standard_mcp_api": {
+      "total": 3,
+      "passed": 0,
+      "failed": 3
+    },
+    "alternative_api": {
+      "total": 2,
+      "passed": 0,
+      "failed": 2
+    },
+    "github_repository": {
+      "total": 4,
+      "passed": 0,
+      "failed": 4
+    }
+  }
+}

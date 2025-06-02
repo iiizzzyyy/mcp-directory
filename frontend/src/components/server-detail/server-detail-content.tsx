@@ -2,18 +2,20 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Github, ExternalLink, Calendar } from 'lucide-react';
+import { ArrowLeft, Github, ExternalLink, Calendar, Server as ServerIcon, Wrench, Code } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { formatDistanceToNow } from 'date-fns';
 
-// Import existing components
-import CompatibilityMatrix from './SimpleCompatibilityMatrix';
-import HealthChart from './SimpleHealthChart';
-import ChangelogSection from './SimpleChangelogSection';
-import StaticDocumentationSection from './StaticDocumentationSection';
-import InstallationTab from './InstallationTab';
+// Import server components
+import ServerInstall from './ServerInstall';
+import ServerTools from './ServerTools';
+import ServerChangelog from './ServerChangelog';
+import ServerCompatibility from './ServerCompatibility';
+import ServerHealth from './ServerHealth';
+import ServerDocumentation from './ServerDocumentation';
+import ApiTab from './ApiTab';
 
 // Server interface
 export interface Server {
@@ -180,96 +182,163 @@ export function ServerDetailContent({ server, error }: ServerDetailContentProps)
         </div>
       </div>
       
-      {/* Tabs for different sections */}
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="mt-6">
-        <TabsList className="bg-background w-full justify-start border-b overflow-x-auto flex-nowrap whitespace-nowrap rounded-none p-0">
-          <TabsTrigger value="overview" className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary">Overview</TabsTrigger>
-          <TabsTrigger value="docs" className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary">Documentation</TabsTrigger>
-          <TabsTrigger value="install" className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary">Installation</TabsTrigger>
-          <TabsTrigger value="compatibility" className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary">Compatibility</TabsTrigger>
-          <TabsTrigger value="health" className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary">Health</TabsTrigger>
-          <TabsTrigger value="changelog" className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary">Changelog</TabsTrigger>
+      {/* Main tabs for different sections */}
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="mt-8">
+        <TabsList className="bg-background w-full justify-start overflow-x-auto flex-nowrap whitespace-nowrap rounded-lg border p-1 gap-1">
+          <TabsTrigger 
+            value="overview" 
+            className="rounded-md flex items-center gap-2 data-[state=active]:bg-gray-100 data-[state=active]:text-gray-900 px-4"
+          >
+            <ServerIcon className="h-4 w-4" />
+            <span>Overview</span>
+          </TabsTrigger>
+          
+          <TabsTrigger 
+            value="tools" 
+            className="rounded-md flex items-center gap-2 data-[state=active]:bg-gray-100 data-[state=active]:text-gray-900 px-4"
+          >
+            <Wrench className="h-4 w-4" />
+            <span>Tools</span>
+          </TabsTrigger>
+          
+          <TabsTrigger 
+            value="api" 
+            className="rounded-md flex items-center gap-2 data-[state=active]:bg-gray-100 data-[state=active]:text-gray-900 px-4"
+          >
+            <Code className="h-4 w-4" />
+            <span>API</span>
+          </TabsTrigger>
+
+          <TabsTrigger 
+            value="docs" 
+            className="rounded-md flex items-center gap-2 data-[state=active]:bg-gray-100 data-[state=active]:text-gray-900 px-4"
+          >
+            <svg className="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+            <span>Documentation</span>
+          </TabsTrigger>
         </TabsList>
         
-        {/* Overview tab - simple data display */}
+        {/* Overview tab - all server info */}
         <TabsContent value="overview" className="pt-6">
-          <div className="grid gap-6 md:grid-cols-2">
+          <div className="grid gap-8 md:grid-cols-2">
             {/* Server information */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-medium">Server Information</h3>
-              <dl className="grid grid-cols-2 gap-x-4 gap-y-2">
-                <dt className="text-sm font-medium text-muted-foreground">ID:</dt>
-                <dd className="text-sm truncate">{server.id}</dd>
-                
-                {server.category && (
-                  <>
-                    <dt className="text-sm font-medium text-muted-foreground">Category:</dt>
-                    <dd className="text-sm">{server.category}</dd>
-                  </>
-                )}
-                
-                {server.platform && (
-                  <>
-                    <dt className="text-sm font-medium text-muted-foreground">Platform:</dt>
-                    <dd className="text-sm">{server.platform}</dd>
-                  </>
-                )}
-                
-                {server.install_method && (
-                  <>
-                    <dt className="text-sm font-medium text-muted-foreground">Install Method:</dt>
-                    <dd className="text-sm">{server.install_method}</dd>
-                  </>
-                )}
-                
-                {server.stars !== undefined && (
-                  <>
-                    <dt className="text-sm font-medium text-muted-foreground">GitHub Stars:</dt>
-                    <dd className="text-sm">{server.stars.toLocaleString()}</dd>
-                  </>
-                )}
-              </dl>
-            </div>
-            
-            {/* Server tags */}
-            {server.tags && server.tags.length > 0 && (
-              <div className="space-y-4">
-                <h3 className="text-lg font-medium">Tags</h3>
-                <div className="flex flex-wrap gap-2">
-                  {server.tags.map((tag) => (
-                    <Badge key={tag} variant="secondary" className="capitalize">
-                      {tag}
-                    </Badge>
-                  ))}
+            <div className="space-y-6">
+              <div>
+                <h3 className="text-lg font-medium mb-3">Server Information</h3>
+                <dl className="grid grid-cols-2 gap-x-4 gap-y-3 border rounded-lg divide-y">
+                  <div className="col-span-2 px-4 py-3 bg-gray-50">
+                    <dt className="text-sm font-medium text-gray-500">Server ID</dt>
+                    <dd className="text-sm font-mono mt-1 truncate">{server.id}</dd>
+                  </div>
+                  
+                  {server.category && (
+                    <div className="col-span-2 px-4 py-3">
+                      <dt className="text-sm font-medium text-gray-500">Category</dt>
+                      <dd className="text-sm mt-1">{server.category}</dd>
+                    </div>
+                  )}
+                  
+                  {server.platform && (
+                    <div className="col-span-2 px-4 py-3">
+                      <dt className="text-sm font-medium text-gray-500">Platform</dt>
+                      <dd className="text-sm mt-1">{server.platform}</dd>
+                    </div>
+                  )}
+                  
+                  {server.install_method && (
+                    <div className="col-span-2 px-4 py-3">
+                      <dt className="text-sm font-medium text-gray-500">Install Method</dt>
+                      <dd className="text-sm mt-1">{server.install_method}</dd>
+                    </div>
+                  )}
+                  
+                  {server.stars !== undefined && (
+                    <div className="col-span-2 px-4 py-3">
+                      <dt className="text-sm font-medium text-gray-500">GitHub Stars</dt>
+                      <dd className="text-sm mt-1">{server.stars.toLocaleString()}</dd>
+                    </div>
+                  )}
+                </dl>
+              </div>
+              
+              {/* Server tags */}
+              {server.tags && server.tags.length > 0 && (
+                <div>
+                  <h3 className="text-lg font-medium mb-3">Tags</h3>
+                  <div className="border rounded-lg p-4">
+                    <div className="flex flex-wrap gap-2">
+                      {server.tags.map((tag) => (
+                        <Badge key={tag} variant="secondary" className="capitalize">
+                          {tag}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+              {/* Installation section */}
+              <div>
+                <h3 className="text-lg font-medium mb-3">Installation</h3>
+                <div className="border rounded-lg">
+                  <ServerInstall 
+                    serverId={server.id} 
+                    serverName={server.name} 
+                    defaultInstallCommand={server.install_command} 
+                  />
                 </div>
               </div>
-            )}
+            </div>
+            
+            {/* Right column sections */}
+            <div className="space-y-6">
+              {/* Documentation section */}
+              <div>
+                <h3 className="text-lg font-medium mb-3">Documentation</h3>
+                <div className="border rounded-lg p-4">
+                  <ServerDocumentation serverId={server.id} />
+                </div>
+              </div>
+              
+              {/* Health chart section */}
+              <div>
+                <h3 className="text-lg font-medium mb-3">Health Status</h3>
+                <div className="border rounded-lg p-4">
+                  <ServerHealth serverId={server.id} />
+                </div>
+              </div>
+              
+              {/* Compatibility section */}
+              <div>
+                <h3 className="text-lg font-medium mb-3">Compatibility</h3>
+                <div className="border rounded-lg p-4">
+                  <ServerCompatibility serverId={server.id} />
+                </div>
+              </div>
+              
+              {/* Changelog section */}
+              <div>
+                <h3 className="text-lg font-medium mb-3">Latest Changes</h3>
+                <div className="border rounded-lg p-4">
+                  <ServerChangelog serverId={server.id} />
+                </div>
+              </div>
+            </div>
           </div>
+        </TabsContent>
+        {/* Tools tab - server tools */}
+        <TabsContent value="tools" className="pt-6">
+          <ServerTools serverId={server.id} serverName={server.name} />
+        </TabsContent>
+        
+        {/* API tab - API integration */}
+        <TabsContent value="api" className="pt-6">
+          <ApiTab server={server} />
         </TabsContent>
         
         {/* Documentation tab */}
         <TabsContent value="docs" className="pt-6">
-          <StaticDocumentationSection server={server} />
-        </TabsContent>
-        
-        {/* Installation tab */}
-        <TabsContent value="install" className="pt-6">
-          <InstallationTab server={server} />
-        </TabsContent>
-        
-        {/* Compatibility tab */}
-        <TabsContent value="compatibility" className="pt-6">
-          <CompatibilityMatrix server={server} />
-        </TabsContent>
-        
-        {/* Health tab */}
-        <TabsContent value="health" className="pt-6">
-          <HealthChart server={server} />
-        </TabsContent>
-        
-        {/* Changelog tab */}
-        <TabsContent value="changelog" className="pt-6">
-          <ChangelogSection server={server} />
+          <ServerDocumentation serverId={server.id} fullContent />
         </TabsContent>
       </Tabs>
     </div>

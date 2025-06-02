@@ -1,7 +1,15 @@
 const { crawlDirectory, processBatch } = require('./crawler');
-const { serverExists, insertServer, enrichWithGitHubData } = require('./database');
+const { 
+  serverExists, 
+  insertServer, 
+  enrichWithGitHubData,
+  processAndUpdateReadmeData 
+} = require('./database');
 const { formatDate } = require('./utils');
 require('dotenv').config();
+
+// Flag to enable/disable README processing during crawl
+const PROCESS_READMES = process.env.PROCESS_READMES === 'true' || false;
 
 // Domains to crawl
 const domains = [
@@ -17,10 +25,12 @@ const summary = {
   skipped: 0,
   duplicates: 0,
   errors: 0,
+  readmesProcessed: 0,
   details: {
     added: [],
     skipped: [],
-    errors: []
+    errors: [],
+    readmes: []
   }
 };
 
@@ -49,19 +59,60 @@ async function processServer(server, summary) {
     // Enrich with GitHub data if available
     if (server.github_url) {
       console.log(`Enriching ${server.name} with GitHub data from ${server.github_url}`);
-      const githubData = await enrichWithGitHubData(server.github_url);
+      
+      // Determine whether to include README data in enrichment
+      const includeReadme = PROCESS_READMES;
+      const githubData = await enrichWithGitHubData(server.github_url, includeReadme);
+      
+      // Add GitHub metadata to server object
       Object.assign(server, githubData);
+      
+      // Save README data if available and enabled
+      if (includeReadme && githubData.readme) {
+        console.log(`README data available for ${server.name}`);
+        server.readme_overview = githubData.readme.overview || null;
+        server.readme_last_updated = new Date().toISOString();
+      }
     }
     
     // Insert server into database
-    await insertServer(server);
+    const serverId = await insertServer(server);
     
     summary.added++;
     summary.details.added.push({
       name: server.name,
-      source: server.source
+      source: server.source,
+      id: serverId
     });
-    console.log(`Added server: ${server.name}`);
+    console.log(`Added server: ${server.name} (ID: ${serverId})`);
+    
+    // Process and store README data if available
+    if (PROCESS_READMES && server.github_url && serverId) {
+      try {
+        console.log(`Processing README data for ${server.name}`);
+        const readmeResult = await processAndUpdateReadmeData(serverId, server.github_url);
+        
+        if (readmeResult.success) {
+          summary.readmesProcessed++;
+          summary.details.readmes.push({
+            name: server.name,
+            id: serverId,
+            success: true
+          });
+          console.log(`Successfully processed README for ${server.name}`);
+        } else {
+          summary.details.readmes.push({
+            name: server.name,
+            id: serverId,
+            success: false,
+            error: readmeResult.error
+          });
+          console.log(`Failed to process README for ${server.name}: ${readmeResult.error}`);
+        }
+      } catch (readmeError) {
+        console.error(`Error processing README for ${server.name}:`, readmeError);
+      }
+    }
   } catch (error) {
     summary.errors++;
     summary.details.errors.push({
@@ -80,6 +131,7 @@ async function main() {
   console.log(`Using Supabase URL: ${process.env.SUPABASE_URL}`);
   console.log(`Firecrawl API Key present: ${!!process.env.FIRECRAWL_API_KEY}`);
   console.log(`GitHub API Token present: ${!!process.env.GITHUB_API_TOKEN}`);
+  console.log(`README processing: ${PROCESS_READMES ? 'ENABLED' : 'DISABLED'}`);
   console.log('-------------------------------------------');
   
   const startTime = new Date();
@@ -115,6 +167,7 @@ async function main() {
   console.log(`Added: ${summary.added} servers`);
   console.log(`Skipped: ${summary.skipped} servers (Duplicates: ${summary.duplicates})`);
   console.log(`Errors: ${summary.errors}`);
+  console.log(`READMEs Processed: ${summary.readmesProcessed}`);
   console.log(`Duration: ${(durationMs / 1000).toFixed(2)} seconds`);
   
   if (summary.details.added.length > 0) {
@@ -136,6 +189,20 @@ async function main() {
     summary.details.errors.forEach(error => {
       console.log(`- ${error.domain || 'Unknown'}: ${error.error}`);
     });
+  }
+  
+  if (PROCESS_READMES && summary.details.readmes.length > 0) {
+    console.log('\nREADME Processing:');
+    const successful = summary.details.readmes.filter(r => r.success).length;
+    const failed = summary.details.readmes.filter(r => !r.success).length;
+    console.log(`Successful: ${successful}, Failed: ${failed}`);
+    
+    if (failed > 0) {
+      console.log('\nFailed README processing:');
+      summary.details.readmes.filter(r => !r.success).forEach(readme => {
+        console.log(`- ${readme.name}: ${readme.error}`);
+      });
+    }
   }
   
   console.log('\nCrawl completed at', formatDate(endTime));

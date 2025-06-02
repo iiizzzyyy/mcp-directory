@@ -1,134 +1,131 @@
 // Server component for fully dynamic rendering
-import { createServerSupabaseClient } from '@/lib/supabase-server';
-import { Server } from '@/lib/api-client';
-import ServersPageContent from './servers-page-content';
+import { Suspense } from "react";
+import { Metadata } from "next";
+import { getServers } from "@/lib/data-fetching";
+import ServersPageContent from "./servers-page-content";
+import { Server } from "@/lib/types/index";
+import ServersListLoading from "./loading";
+import { PaginationMeta } from "@/lib/data-fetching";
 
 // This is a dynamically rendered server component
 // It uses server-side data fetching and passes props to client components as needed
 export const dynamic = 'force-dynamic';
 export const revalidate = 0; // No cache, always fetch fresh data
 
+/**
+ * Generate metadata for the servers listing page
+ */
+export const metadata: Metadata = {
+  title: 'MCP Servers Directory',
+  description: 'Browse and discover Model Context Protocol servers for your AI applications',
+  openGraph: {
+    title: 'MCP Servers Directory',
+    description: 'Browse and discover Model Context Protocol servers for your AI applications',
+    type: 'website'
+  }
+};
+
 export interface SearchParams {
   page?: string;
-  size?: string;
-  sort?: string;
-  order?: string;
-  category?: string;
-  tag?: string;
+  pageSize?: string;
   query?: string;
+  category?: string;
+  sortBy?: string;
+  sortOrder?: string;
 }
 
-// Server component that fetches data at request time
+/**
+ * Inner server component that handles data fetching
+ * This is used inside a Suspense boundary in the main ServersPage component
+ */
+async function ServersList({
+  page = 1,
+  pageSize = 12,
+  query = '',
+  category = '',
+  sortBy = 'stars',
+  sortOrder = 'desc'
+}: {
+  page: number;
+  pageSize: number;
+  query: string;
+  category: string;
+  sortBy: string;
+  sortOrder: 'asc' | 'desc';
+}) {
+  try {
+    // Fetch servers using our utility function
+    const { servers, pagination, error } = await getServers(
+      { page, pageSize, sortBy, sortOrder },
+      { query, category }
+    );
+
+    // Return error state to the client component
+    if (error) {
+      return <ServersPageContent servers={[]} pagination={pagination} error={error} />;
+    }
+
+    // Return servers to the client component
+    return <ServersPageContent servers={servers} pagination={pagination} />;
+  } catch (error) {
+    console.error('Error in ServersList:', error);
+    
+    // Create a default pagination object for error state
+    const defaultPagination: PaginationMeta = {
+      totalCount: 0,
+      currentPage: page,
+      pageSize,
+      totalPages: 0,
+      hasNextPage: false,
+      hasPrevPage: false
+    };
+    
+    return (
+      <ServersPageContent 
+        servers={[]} 
+        pagination={defaultPagination}
+        error={error instanceof Error ? error.message : 'An error occurred while fetching servers'} 
+      />
+    );
+  }
+}
+
+/**
+ * Main servers page component
+ * Provides the layout and wraps the ServersList component in a Suspense boundary
+ */
 export default async function ServersPage({
   searchParams,
 }: {
   searchParams?: SearchParams;
 }) {
   // Parse search parameters with defaults
-  const currentPage = Number(searchParams?.page) || 1;
-  const pageSize = Number(searchParams?.size) || 12;
-  const sortBy = searchParams?.sort || 'stars';
-  const sortOrder = searchParams?.order || 'desc';
-  const categoryFilter = searchParams?.category || '';
-  const tagFilter = searchParams?.tag || '';
-  const searchQuery = searchParams?.query || '';
+  const page = Number(searchParams?.page) || 1;
+  const pageSize = Number(searchParams?.pageSize) || 12;
+  const query = searchParams?.query?.toString() || '';
+  const category = searchParams?.category?.toString() || '';
+  const sortBy = searchParams?.sortBy?.toString() || 'stars';
+  const sortOrder = (searchParams?.sortOrder?.toString() || 'desc') as 'asc' | 'desc';
 
-  try {
-    // Use our custom Supabase client for server-side data fetching
-    const supabase = createServerSupabaseClient();
-
-    // Calculate offset for pagination
-    const offset = (currentPage - 1) * pageSize;
-
-    // Build query
-    let query = supabase
-      .from('servers')
-      .select('*', { count: 'exact' })
-      .order(sortBy, { ascending: sortOrder === 'asc' })
-      .range(offset, offset + pageSize - 1);
-    
-    // Apply filters if present
-    if (categoryFilter) {
-      query = query.eq('category', categoryFilter);
-    }
-    
-    if (tagFilter) {
-      query = query.contains('tags', [tagFilter]);
-    }
-    
-    if (searchQuery) {
-      query = query.or(`name.ilike.%${searchQuery}%,description.ilike.%${searchQuery}%`);
-    }
-    
-    // Execute query
-    const { data: servers, error, count } = await query;
-    
-    // Error handling - use mock data if needed
-    if (error) {
-      console.error('Error fetching servers:', error.message);
+  return (
+    <div className="container mx-auto py-8">
+      <h1 className="text-3xl font-bold mb-6">MCP Servers Directory</h1>
+      <p className="text-muted-foreground mb-8">
+        Browse and discover Model Context Protocol servers for AI assistants
+      </p>
       
-      // Load mock data as fallback
-      const { mockServers } = await import('@/lib/mock-data');
-      
-      // Calculate pagination with mock data
-      const totalCount = mockServers.length;
-      const totalPages = Math.ceil(totalCount / pageSize);
-      
-      // Convert mock data to match Server interface
-      const typedServers = mockServers.slice(offset, offset + pageSize).map(server => ({
-        ...server,
-        health_status: (server.health_status as 'online' | 'offline' | 'degraded' | 'unknown' || 'unknown')
-      }));
-      
-      // Return client component with mock data
-      return (
-        <ServersPageContent 
-          servers={typedServers} 
-          totalCount={totalCount}
-          currentPage={currentPage}
+      {/* Wrap dynamic content in Suspense for streaming */}
+      <Suspense fallback={<ServersListLoading />}>
+        {/* This inner component will be rendered after data is fetched */}
+        <ServersList 
+          page={page}
           pageSize={pageSize}
-          totalPages={totalPages}
-          error={`Failed to fetch servers: ${error.message}`}
+          query={query}
+          category={category}
+          sortBy={sortBy}
+          sortOrder={sortOrder}
         />
-      );
-    }
-    
-    // Calculate pagination values
-    const totalCount = count || 0;
-    const totalPages = Math.ceil(totalCount / pageSize);
-    
-    // Return client component with data
-    return (
-      <ServersPageContent 
-        servers={servers || []} 
-        totalCount={totalCount}
-        currentPage={currentPage}
-        pageSize={pageSize}
-        totalPages={totalPages}
-      />
-    );
-  } catch (error) {
-    console.error('Unexpected error in servers page:', error);
-    
-    // Load mock data as fallback for any unexpected errors
-    const { mockServers } = await import('@/lib/mock-data');
-    
-    // Convert mock data to match Server interface
-    const typedServers = mockServers.slice(0, pageSize).map(server => ({
-      ...server,
-      health_status: (server.health_status as 'online' | 'offline' | 'degraded' | 'unknown' || 'unknown')
-    }));
-    
-    // Return client component with mock data
-    return (
-      <ServersPageContent 
-        servers={typedServers} 
-        totalCount={mockServers.length}
-        currentPage={1}
-        pageSize={pageSize}
-        totalPages={Math.ceil(mockServers.length / pageSize)}
-        error="An unexpected error occurred while fetching servers"
-      />
-    );
-  }
+      </Suspense>
+    </div>
+  );
 }
