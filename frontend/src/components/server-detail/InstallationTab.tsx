@@ -12,6 +12,10 @@ interface InstallInstruction {
   install_command: string;
   additional_steps?: string | null;
   requirements?: string | null;
+  format?: string;
+  environment?: string;
+  is_recommended?: boolean;
+  requires_api_key?: boolean;
 }
 
 interface InstallationTabProps {
@@ -143,17 +147,36 @@ export default function InstallationTab({
     );
   }
 
+  // Group installations by environment for better organization
+  const groupedInstructions = instructions.reduce((acc, instruction) => {
+    const env = instruction.environment || 'default';
+    if (!acc[env]) acc[env] = [];
+    acc[env].push(instruction);
+    return acc;
+  }, {} as Record<string, InstallInstruction[]>);
+
+  // Sort environments by importance
+  const sortedEnvironments = Object.keys(groupedInstructions).sort((a, b) => {
+    // Priority order: vscode, claude, default, others
+    const order: Record<string, number> = {
+      'vscode': 1,
+      'claude': 2,
+      'default': 3
+    };
+    return (order[a] || 99) - (order[b] || 99);
+  });
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <div className="mb-6">
         <h2 className="text-xl font-semibold">Installation Instructions</h2>
-        <p className="text-gray-600 mt-1">
+        <p className="text-muted-foreground mt-1">
           Install {server?.name || "this MCP server"} on your preferred platform
         </p>
       </div>
 
-      <div className="w-full md:w-64 mb-6">
-        <label className="text-sm text-gray-600 mb-2 block">
+      <div className="w-full md:w-72 mb-8">
+        <label className="text-sm font-medium mb-2 block">
           Select Language / Platform
         </label>
         <div className="mb-5">
@@ -162,24 +185,48 @@ export default function InstallationTab({
             selectedLanguage={selectedLanguage}
             onLanguageChange={setSelectedLanguage}
             persistKey={`server_${effectiveServerId}`} // Use server ID for persistence key
-            className="w-full md:w-64"
+            className="w-full"
           />
         </div>
       </div>
 
-      <div className="space-y-8">
-        {instructions.map((instruction, index) => (
+      {/* Installation sections by environment */}
+      {sortedEnvironments.map((env) => (
+        <div key={env} className="space-y-6">
+          {env !== 'default' && (
+            <h3 className="text-lg font-medium border-b pb-2 capitalize">{env} Installation</h3>
+          )}
+          
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {groupedInstructions[env].map((instruction, index) => (
+              <InstallBlock
+                key={index}
+                platform={instruction.platform}
+                icon={instruction.icon_url || undefined}
+                installCommand={instruction.install_command}
+                additionalSteps={instruction.additional_steps || undefined}
+                requirements={instruction.requirements || undefined}
+                format={(instruction.format as any) || 'auto'}
+                environment={(instruction.environment as any) || 'custom'}
+                isRecommended={instruction.is_recommended || false}
+                apiKey={instruction.requires_api_key ? "required" : undefined}
+              />
+            ))}
+          </div>
+        </div>
+      ))}
+      
+      {instructions.length === 0 && effectiveDefaultCommand && (
+        <div className="mt-8">
+          <h3 className="text-lg font-medium mb-4">Generic Installation</h3>
           <InstallBlock
-            key={index}
-            platform={instruction.platform}
-            icon={instruction.icon_url || undefined}
-            installCommand={instruction.install_command}
-            additionalSteps={instruction.additional_steps || undefined}
-            requirements={instruction.requirements || undefined}
-            className="border-gray-200"
+            platform="Default"
+            installCommand={effectiveDefaultCommand}
+            format="auto"
+            isRecommended={true}
           />
-        ))}
-      </div>
+        </div>
+      )}
     </div>
   );
 }

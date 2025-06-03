@@ -4,7 +4,39 @@ This file tracks the tasks, progress, and completion status for the MCP Director
 
 ## Current Sprint
 
-### New Redesign Tasks (June 2, 2025)
+### New Redesign Tasks (June 3, 2025)
+
+- [ ] **XOM-104: Server Details Page UI Redesign (Smithery-Inspired)** (In Progress: June 3, 2025)
+  - Implement dark theme for server details page
+  - Create server header with icon, verification badge, and copy URL functionality
+  - Design tabbed installation panel with client-specific instructions
+  - Redesign tools section with expandable dark cards
+  - Reorganize statistics and metadata into grid layout with icons
+  - Add security verification status display
+  - Ensure mobile responsiveness
+
+- [ ] **XOM-105: Server Data Model & Scraping Enhancement** (Planned: June 3, 2025)
+  - Extend database schema with new fields
+  - Update GitHub scraper to extract additional metadata
+  - Implement verification status logic
+  - Add support for client-specific installation instructions
+  - Enhance tool detection with parameter extraction
+  - Create migration scripts
+
+- [ ] **XOM-106: Server Details API & Backend Logic** (Planned: June 3, 2025)
+  - Update server-detail edge function
+  - Create client-specific installation endpoint
+  - Implement security verification API
+  - Add success rate calculation logic
+  - Optimize performance with caching
+
+- [ ] **XOM-107: Integration & Testing** (Planned: June 3, 2025)
+  - Integrate UI components with updated API endpoints
+  - Test installation functionality with different clients
+  - Verify tool display and expandability
+  - Test security verification display
+  - Conduct cross-browser testing
+  - Perform mobile responsiveness testing
 
 - [ ] **XOM-93: Redesign Server Detail Page with Smithery-Inspired UI** (In Progress: June 2, 2025)
   - Update tabbed interface with "Overview", "Tools", and "API" sections

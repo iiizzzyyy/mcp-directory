@@ -41,13 +41,43 @@ The MCP Directory consists of several integrated components:
 ## Database Schema
 
 The project uses the following primary tables:
-- `servers`: Main server records with metadata
+- `servers`: Main server records with metadata, including:
+  - `readme_overview`: Rich HTML content for the server's overview
+  - `install_instructions`: JSON object with platform-specific installation instructions
+  - `install_code_blocks`: JSON object with platform-specific code blocks for installation
 - `health_data`: Health monitoring data for servers
 - `server_metrics`: Performance metrics time-series data
-- `server_install_instructions`: Platform-specific installation commands
 - `server_tools`: Tools detected for each MCP server
 - `tool_parameters`: Parameters for each detected tool
 - `pending_servers`: User-submitted servers awaiting review
+
+## Server Detail Pages
+
+The server detail pages provide comprehensive information about each MCP server through a tabbed interface:
+
+### Overview Tab
+- Displays rich HTML content from the server's `readme_overview` field
+- Falls back to the plain text `description` if no README content is available
+- Renders markdown-style formatting including headings, lists, code blocks, and tables
+
+### Installation Tab
+- Provides platform-specific installation instructions (Linux, macOS, Windows)
+- Displays step-by-step instructions with code blocks that can be copied
+- Uses a fallback system to retrieve data from multiple sources:
+  1. Supabase Edge Function (`servers-install`)
+  2. Direct database query via server component
+  3. Default instructions if no data is available
+
+### Compatibility Tab
+- Shows compatible LLM providers and systems
+- Displays tool compatibility status
+
+### Changelog Tab
+- Lists version history and updates
+- Shows release dates and significant changes
+
+### Data Flow
+Server detail pages use a robust data retrieval system with multiple fallbacks to ensure consistent user experience. For more details, see the [Server Data Flow](./docs/server-data-flow.md) documentation.
 
 ## Documentation
 

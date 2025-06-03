@@ -4,6 +4,8 @@ import { useState } from 'react';
 import { Copy, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import 'github-markdown-css';
+import '@/styles/github-markdown-custom.css';
 
 interface HtmlInstallBlockProps {
   platform: string;
@@ -71,10 +73,10 @@ export default function HtmlInstallBlock({
       </div>
       
       <div className="relative">
-        <div className="bg-white p-4 rounded-b-md overflow-x-auto text-sm">
-          {/* Use dangerouslySetInnerHTML to render HTML content - we're assuming this content is from a trusted source */}
+        <div className="bg-white p-6 rounded-b-md overflow-x-auto">
+          {/* GitHub-style markdown rendering for README content */}
           <div 
-            className="prose prose-sm max-w-none"
+            className="markdown-body max-w-none"
             dangerouslySetInnerHTML={{ __html: htmlContent }} 
           />
         </div>

@@ -1,0 +1,120 @@
+/**
+ * Smithery Dark Theme CSS - For MCP Directory Server Details Page
+ * Part of XOM-104: Smithery-Inspired UI Redesign
+ */
+
+/* Custom Scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #27272a; /* zinc-800 */
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #3f3f46; /* zinc-700 */
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #52525b; /* zinc-600 */
+}
+
+/* Firefox */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #3f3f46 #27272a;
+}
+
+/* Edge and IE - not fully supported, but adds some styling */
+.custom-scrollbar {
+  -ms-overflow-style: -ms-autohiding-scrollbar;
+}
+
+/* Dark Theme Card Hover Effects */
+.smithery-card {
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.smithery-card:hover {
+  border-color: #3f3f46; /* zinc-700 */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Responsive Font Sizes */
+@media (max-width: 640px) {
+  .smithery-heading {
+    font-size: 1.25rem !important;
+  }
+  
+  .smithery-subheading {
+    font-size: 1rem !important;
+  }
+  
+  .smithery-text {
+    font-size: 0.875rem !important;
+  }
+}
+
+/* Mobile Optimization */
+@media (max-width: 640px) {
+  .mobile-stack {
+    flex-direction: column !important;
+  }
+  
+  .mobile-full-width {
+    width: 100% !important;
+  }
+  
+  .mobile-hide {
+    display: none !important;
+  }
+  
+  .mobile-pad {
+    padding: 1rem !important;
+  }
+  
+  .mobile-center {
+    text-align: center !important;
+    justify-content: center !important;
+  }
+}
+
+/* Tab Content Animation */
+.tab-content-enter {
+  opacity: 0;
+  transform: translateY(5px);
+}
+
+.tab-content-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 300ms, transform 300ms;
+}
+
+.tab-content-exit {
+  opacity: 1;
+}
+
+.tab-content-exit-active {
+  opacity: 0;
+  transition: opacity 300ms;
+}
+
+/* Shimmer loading effect for skeletons */
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.skeleton-shimmer {
+  animation: shimmer 2s infinite linear;
+  background: linear-gradient(to right, #27272a 8%, #3f3f46 18%, #27272a 33%);
+  background-size: 1000px 100%;
+}
